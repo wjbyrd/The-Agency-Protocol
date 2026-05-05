@@ -90,6 +90,21 @@ body {
     background-position: center;
 }
 
+/* corporate noir surveillance overlay */
+body::after{
+    content:"";
+    position:fixed;
+    inset:0;
+    background:
+        radial-gradient(circle at center,
+            rgba(56,189,248,0.12),
+            rgba(15,23,42,0.58) 45%,
+            rgba(2,6,23,0.94) 100%);
+    pointer-events:none;
+    z-index:-1;
+}
+
+
 .dungeon-container {
     position: relative;
     display: flex;
@@ -2251,7 +2266,7 @@ if(tag === "organization" || tag === "structure" || tag === "firms"){
     return "LO22.1_parent_company_objective";
 }
 
-return `${tag}_${type}`;
+return `${tag}_${type}`;}
 
 function getObjectiveBucket(question){
     const objectiveKey = inferObjective(question);
