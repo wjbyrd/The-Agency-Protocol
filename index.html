@@ -5018,7 +5018,7 @@ function generateCode(name, acc, streak, total){
         hash |= 0;
     }
 
-    return "DOM-" + Math.abs(hash).toString(36).toUpperCase();
+    return "AGENT-" + Math.abs(hash).toString(36).toUpperCase();
 } 
 
 // =============================================
@@ -5066,10 +5066,10 @@ function handleVictory() {
 
 sendGameData({
     runID: runID,
-	  game: "The Agency Protocol",
+	 game: "The Agency Protocol",
     event: "complete",
     user: username,
-	  email: studentEmail,
+	 email: studentEmail,
     room: room,
     questionId: 0,
     correct: 1,
