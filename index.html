@@ -2218,13 +2218,15 @@ function clearSavedGame(){
 
 function generatePseudonymFromEmail(email) {
     const adjectives = [
-        "Iron", "Crimson", "Silent", "Golden", "Shadow", "Blazing",
-        "Stone", "Storm", "Obsidian", "Frost", "Ember", "Steel"
+        "Redacted", "Covert", "Blackline", "Cipher", "Ghost", "Proxy",
+        "Shadow", "Silent", "Rogue", "Obscura", "Signal", "Vector",
+        "Phantom", "Midnight", "Null", "Deep", "Gray", "Blind"
     ];
 
     const nouns = [
-        "Anvil", "Hammer", "Falcon", "Forge", "Sentinel", "Warden",
-        "Cipher", "Titan", "Raven", "Vanguard", "Crown", "Engine"
+        "Analyst", "Auditor", "Asset", "Operative", "Handler", "Agent",
+        "Courier", "Director", "Controller", "Inspector", "Broker", "Sentinel",
+        "Informant", "Strategist", "Verifier", "Architect", "Watcher", "Counsel"
     ];
 
     let hash = 0;
@@ -2243,7 +2245,6 @@ function generatePseudonymFromEmail(email) {
 
     return `${adj}${noun}${number}`;
 }
- 
 // =============================================
 // ADAPTIVE ENGINE — DO NOT TOUCH
 // =============================================
