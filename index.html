@@ -1817,7 +1817,7 @@ Edit appearance freely.
 Respect structure strictly.
 
 ========================================= -->
-<body class="command-agency">
+<body class="agency-protocol command-agency">
 <!-- Screen reader announcements (accessibility — do not remove) -->    
   <div id="srAnnouncements"
      aria-live="assertive"
@@ -2078,13 +2078,15 @@ let remediationState = {
     stage: null,
     tag: null,
     objective: null,
+    skill: null,
+    commonError: null,
     sourceType: null,
     returnRoom: null,
     originQuestionId: null,
     careless: false
 };
 let conceptMemory = {};
-let masteryState = { byTag: {}, byObjective: {}, recent: [] };
+let masteryState = { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
 let adaptiveMode = "support";
 // =============================================
 // RAPID GUESSING / BUTTON-MASHING DETECTOR
@@ -2125,6 +2127,11 @@ let questionHistory = {
 };
 
 const SAVE_KEY = "agencyProtocolSave_v1";
+const HUB_MISSION_KEY = "agency";
+const HUB_STARTED_KEY = "managerialHub_agency_started";
+const HUB_COMPLETE_KEY = "managerialHub_agency_complete";
+const HUB_STATUS_KEY = "managerialHub_agency_status";
+const HUB_ROOM_KEY = "managerialHub_agency_room";
 
 function saveGameState(){
     const saveData = {
@@ -2158,6 +2165,9 @@ function saveGameState(){
 
     localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
     localStorage.setItem("gauntletRoom", String(room));
+    localStorage.setItem(HUB_STARTED_KEY, "true");
+    localStorage.setItem(HUB_STATUS_KEY, "active");
+    localStorage.setItem(HUB_ROOM_KEY, String(room));
 
     const autosave = document.getElementById("autosave");
     if(autosave){
@@ -2185,7 +2195,8 @@ function loadSavedGame(){
         runID = saveData.runID || runID || "";
 
         conceptMemory = saveData.conceptMemory || {};
-        masteryState = saveData.masteryState || { byTag: {}, byObjective: {}, recent: [] };
+        masteryState = saveData.masteryState || { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
+        if(!masteryState.bySkill) masteryState.bySkill = {};
         adaptiveMode = saveData.adaptiveMode || "support";
         tagHistory = saveData.tagHistory || [];
         lastTypes = saveData.lastTypes || [];
@@ -2318,6 +2329,30 @@ function getTypeBucket(tag, type){
     return tagBucket.byType[key];
 }
 	 
+function getSkillKey(question){
+    return question?.primarySkill || question?.repairSkill || inferSkill(question) || null;
+}
+
+function getSkillBucket(question){
+    const skill = getSkillKey(question);
+    if(!skill) return null;
+
+    if(!masteryState.bySkill){
+        masteryState.bySkill = {};
+    }
+
+    if(!masteryState.bySkill[skill]){
+        masteryState.bySkill[skill] = {
+            attempts: 0,
+            correct: 0,
+            avgTime: 0,
+            byType: {}
+        };
+    }
+
+    return masteryState.bySkill[skill];
+}
+	 
 function inferObjective(question){
     if(!question) return "general";
     if(question.objective) return question.objective;
@@ -2376,6 +2411,44 @@ if(tag === "organization" || tag === "structure" || tag === "firms"){
 }
 
 return `${tag}_${type}`;}
+
+function inferSkill(question){
+    if(!question) return null;
+
+    const q = (question.q || "").toLowerCase();
+    const tag = (question.tag || "").toLowerCase();
+
+    if(tag === "insurance" || tag === "risk" || tag === "wealth") return "risk_transfer_pooling";
+    if(tag === "adverse_selection" || tag === "hidden_info" || tag === "selection") return "hidden_type_before_transaction";
+    if(tag === "screening") return "screening_hidden_information";
+    if(tag === "signaling") return "signaling_hidden_quality";
+    if(tag === "reputation") return "reputation_quality_signal";
+
+    if(tag === "moral_hazard" || tag === "hidden_action") return "hidden_action_after_transaction";
+    if(tag === "monitoring") return "monitoring_hidden_action";
+    if(tag === "shirking") return "shirking_hidden_effort";
+    if(tag === "lending") return "borrower_moral_hazard";
+
+    if(tag === "principal_agent" || tag === "agency") return "principal_agent_diagnosis";
+    if(tag === "agency_costs") return "agency_control_costs";
+    if(tag === "incentives" || tag === "gaming") return "incentive_metric_gaming";
+    if(tag === "organization" || tag === "structure" || tag === "firms") return "centralization_decentralization";
+
+    if(tag === "parent_company") return "total_firm_value";
+    if(tag === "transfer_pricing") return "transfer_price_alignment";
+    if(tag === "profit_center") return "profit_center_incentives";
+    if(tag === "cost_center") return "cost_center_incentives";
+    if(tag === "functional_units") return "functional_specialization";
+    if(tag === "coordination") return "functional_coordination";
+    if(tag === "multidivisional") return "multidivisional_accountability";
+    if(tag === "budget_games") return "budget_gaming";
+
+    if(q.includes("before") && q.includes("after")) return "selection_vs_moral_hazard";
+    if(q.includes("transfer price") || q.includes("internal price")) return "transfer_price_alignment";
+    if(q.includes("budget") && (q.includes("spend") || q.includes("overstate") || q.includes("slack"))) return "budget_gaming";
+
+    return null;
+}
 
 function getObjectiveBucket(question){
     const objectiveKey = inferObjective(question);
@@ -2445,17 +2518,20 @@ function recordAdaptiveAttempt(question, isCorrect, responseTime){
     const tagBucket = getTagBucket(question.tag);
     const typeBucket = getTypeBucket(question.tag, question.type);
     const objectiveBucket = getObjectiveBucket(question);
+    const skillBucket = getSkillBucket(question);
 
     updateBucket(tagBucket, isCorrect, responseTime);
     updateBucket(typeBucket, isCorrect, responseTime);
     updateBucket(objectiveBucket, isCorrect, responseTime);
+    updateBucket(skillBucket, isCorrect, responseTime);
 
     masteryState.recent.push({
         correct: !!isCorrect,
         responseTime,
         tag: question.tag,
         type: question.type || "default",
-        objective: currentQuestion.objective || inferObjective(currentQuestion)
+        objective: currentQuestion.objective || inferObjective(currentQuestion),
+        skill: getSkillKey(question)
     });
 
     if(masteryState.recent.length > 20){
@@ -2567,6 +2643,8 @@ function resetRemediationState(){
         stage: null,
         tag: null,
         objective: null,
+        skill: null,
+        commonError: null,
         sourceType: null,
         returnRoom: null,
         originQuestionId: null,
@@ -2586,12 +2664,15 @@ function planRemediation(question, responseTime){
     const carelessMiss = responseTime < expected * 0.55 && (objectiveAccuracy === null || objectiveAccuracy >= 0.45);
     const repeatedObjectiveMiss = objectiveAttempts >= 2 && objectiveAccuracy !== null && objectiveAccuracy < 0.6;
     const slowStruggle = responseTime > expected * 1.2;
+    const skill = getSkillKey(question);
 
     return {
         active: true,
         stage: carelessMiss ? "bridge" : "repair",
         tag: question.tag,
         objective: currentQuestion.objective || inferObjective(currentQuestion),
+        skill: skill,
+        commonError: question.commonError || null,
         sourceType: question.type || "default",
         returnRoom: room,
         originQuestionId: question.id || null,
@@ -2607,10 +2688,18 @@ function getRemediationStageLabel(stage){
     return "Recovery Retest";
 }
 
-function getQuestionsMatchingNeed(pool, objectiveKey, tag, excludeIds = []){
+function getQuestionsMatchingNeed(pool, objectiveKey, tag, excludeIds = [], skillKey = null){
     if(!Array.isArray(pool) || pool.length === 0) return [];
 
     let candidates = pool.filter(q => !excludeIds.includes(q.id));
+
+    if(skillKey){
+        let skillMatches = candidates.filter(q =>
+            q.primarySkill === skillKey || q.repairSkill === skillKey || inferSkill(q) === skillKey
+        );
+        if(skillMatches.length > 0) return skillMatches;
+    }
+
     let objectiveMatches = candidates.filter(q => inferObjective(q) === objectiveKey);
     if(objectiveMatches.length > 0) return objectiveMatches;
 
@@ -2628,13 +2717,13 @@ function getRetestPoolName(){
     return "elite";
 }
 
-function pickRemediationFromBank(poolName, objectiveKey, tag, purpose = "confirm"){
+function pickRemediationFromBank(poolName, objectiveKey, tag, purpose = "confirm", skillKey = null){
     const pool = questionBanks[poolName] || [];
     const recentIds = (questionHistory[poolName] || []).slice(-10);
-    let candidates = getQuestionsMatchingNeed(pool, objectiveKey, tag, recentIds);
+    let candidates = getQuestionsMatchingNeed(pool, objectiveKey, tag, recentIds, skillKey);
 
     if(candidates.length === 0){
-        candidates = getQuestionsMatchingNeed(pool, objectiveKey, tag, []);
+        candidates = getQuestionsMatchingNeed(pool, objectiveKey, tag, [], skillKey);
     }
 
     if(candidates.length === 0) return null;
@@ -2664,22 +2753,48 @@ function getRemediationQuestion(state){
 
     if(state.stage === "repair"){
         const repairPool = easyConceptPools[state.tag] || [];
-        const repairCandidates = getQuestionsMatchingNeed(repairPool, state.objective, state.tag, excludeIds);
+        const repairCandidates = getQuestionsMatchingNeed(
+            repairPool,
+            state.objective,
+            state.tag,
+            excludeIds,
+            state.skill
+        );
+
         if(repairCandidates.length > 0){
-            return weightedPick(repairCandidates, { mode: "support", purpose: "repair" });
+            return weightedPick(repairCandidates, {
+                mode: "support",
+                purpose: "repair"
+            });
         }
     }
 
     if(state.stage === "bridge"){
         const bridgePool = mediumConceptPools[state.tag] || [];
-        const bridgeCandidates = getQuestionsMatchingNeed(bridgePool, state.objective, state.tag, excludeIds);
+        const bridgeCandidates = getQuestionsMatchingNeed(
+            bridgePool,
+            state.objective,
+            state.tag,
+            excludeIds,
+            state.skill
+        );
+
         if(bridgeCandidates.length > 0){
-            return weightedPick(bridgeCandidates, { mode: "support", purpose: "confirm" });
+            return weightedPick(bridgeCandidates, {
+                mode: "support",
+                purpose: "confirm"
+            });
         }
     }
 
     const retestPoolName = getRetestPoolName();
-    return pickRemediationFromBank(retestPoolName, state.objective, state.tag, state.stage === "retest" ? "challenge" : "confirm");
+    return pickRemediationFromBank(
+        retestPoolName,
+        state.objective,
+        state.tag,
+        state.stage === "retest" ? "challenge" : "confirm",
+        state.skill
+    );
 }
 
 function weightedPick(pool, options = {}){
@@ -2878,6 +2993,63 @@ algorithm:{
     text:"The system has been rewritten. Rewards, constraints, and behavior now move as one."
 }
 };
+
+function getRecoveryLine(stage){
+  if(stage === "repair"){
+    return "Recovery file opened. The Agency is isolating the broken incentive signal.";
+  }
+
+  if(stage === "bridge"){
+    return "Bridge review active. Apply the concept before the Protocol lets you proceed.";
+  }
+
+  if(stage === "retest"){
+    return "Retest file reopened. Same weakness. Less cover.";
+  }
+
+  if(stage === "miss"){
+    return "The control system is still unstable. Repair the weakness before advancing.";
+  }
+
+  return "Recovery confirmed. Return to the Agency.";
+}
+
+function getAgencyBossName(){
+  if(room === 10) return "Underwriter of Hidden Risk";
+  if(room === 20) return "Auditor of Moral Hazard";
+  if(room === 30) return "Chief Architect of Incentives";
+  return "The Agency";
+}
+
+function getAgencyBossLine({ isCorrect, tag, type, objective, streak, bossHealth, responseTime }){
+  const bossName = getAgencyBossName();
+
+  if(isCorrect && streak >= 5){
+    return `${bossName}: Your streak is noted. Now prove the pattern was not luck.`;
+  }
+
+  if(isCorrect && bossHealth <= 2){
+    return `${bossName}: Clean strike. The file is cracking.`;
+  }
+
+  if(!isCorrect && responseTime < 5000){
+    return `${bossName}: Fast answers and bad incentives. A classic disaster.`;
+  }
+
+  if(!isCorrect && (tag === "adverse_selection" || tag === "moral_hazard")){
+    return `${bossName}: Before or after. That distinction is not optional.`;
+  }
+
+  if(!isCorrect && tag){
+    return `${bossName}: Weakness logged: ${tag}. The Protocol will circle back.`;
+  }
+
+  if(isCorrect){
+    return `${bossName}: Correct. One clean answer does not close the file.`;
+  }
+
+  return `${bossName}: The checkpoint holds. Try again.`;
+}
   
 // =============================================
 // USERNAME RESTORE — SAFE TO MODIFY
@@ -2979,6 +3151,10 @@ function startGame(shouldResume = false) {
     localStorage.setItem("gauntletEmail", studentEmail);
     localStorage.setItem("gauntletUser", username);
     localStorage.setItem("gauntletRunID", runID);
+    localStorage.setItem(HUB_STARTED_KEY, "true");
+    localStorage.setItem(HUB_STATUS_KEY, "active");
+    localStorage.setItem(HUB_ROOM_KEY, String(room));
+    localStorage.setItem("selectedMission", HUB_MISSION_KEY);
 
     sendGameData({
         runID: runID,
@@ -3002,7 +3178,7 @@ function startGame(shouldResume = false) {
         bossPool = [];
         calcBag = [];
         conceptMemory = {};
-        masteryState = { byTag: {}, byObjective: {}, recent: [] };
+        masteryState = { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
         tagHistory = [];
         lastTypes = [];
         adaptiveMode = "support";
@@ -4599,7 +4775,7 @@ recordAdaptiveAttempt(currentQuestion, isCorrect, responseTime);
                 currentQuestion.hint ? "💡 Hint: " + currentQuestion.hint : "";
 
             msgElement.innerHTML =
-                `<span class='fade-out-text'>Control returns. Now prove your command under pressure.</span>`;
+                `<span class='fade-out-text'>${getRecoveryLine("bridge")}</span>`;
 
             displayQuestion();
             return;
@@ -4624,7 +4800,7 @@ recordAdaptiveAttempt(currentQuestion, isCorrect, responseTime);
                 currentQuestion.hint ? "💡 Hint: " + currentQuestion.hint : "";
 
             msgElement.innerHTML =
-                `<span class='fade-out-text'>The concept is contained. One final proof.</span>`;
+                `<span class='fade-out-text'>${getRecoveryLine("retest")}</span>`;
 
             displayQuestion();
             return;
@@ -4637,7 +4813,7 @@ recordAdaptiveAttempt(currentQuestion, isCorrect, responseTime);
     adaptiveMode = "support";
 
     msgElement.innerHTML =
-        `<span class='fade-out-text'>Recovery confirmed. Return to the Agency.</span>`;
+        `<span class='fade-out-text'>${getRecoveryLine("complete")}</span>`;
 
     room = returnRoom;
     saveGameState();
@@ -4659,7 +4835,19 @@ recordAdaptiveAttempt(currentQuestion, isCorrect, responseTime);
         if(isBossRoom){
         bossHealth--;
         
-        msgElement.innerHTML = `<span style='color:#f87171;font-weight:bold;'>⚔ HIT! Boss Health: ${bossHealth}/3</span>`;
+        const bossLine = getAgencyBossLine({
+            isCorrect: true,
+            tag: currentQuestion.tag || "",
+            type: currentQuestion.type || "",
+            objective: currentQuestion.objective || inferObjective(currentQuestion),
+            streak,
+            bossHealth,
+            responseTime
+        });
+
+        msgElement.innerHTML =
+            `<span style='color:#f87171;font-weight:bold;'>⚔ HIT! Boss Health: ${bossHealth}/3</span><br>
+             <span class='fade-out-text'>${bossLine}</span>`;
         triggerBossShake();
         
         if (bossHealth > 0) {
@@ -4746,6 +4934,20 @@ saveGameState();
             (conceptMemory[currentQuestion.tag] || 0) + rushPenalty;
     }
 
+    if(isBossRoom){
+        const bossLine = getAgencyBossLine({
+            isCorrect: false,
+            tag: currentQuestion.tag || "",
+            type: currentQuestion.type || "",
+            objective: currentQuestion.objective || inferObjective(currentQuestion),
+            streak,
+            bossHealth,
+            responseTime
+        });
+
+        msgElement.innerHTML = `<span class='fade-out-text'>${bossLine}</span>`;
+    }
+
     // --- IF STUDENT MISSES DURING ACTIVE REMEDIATION ---
 if(remediationState.active){
     const remediationPrompt = getRemediationQuestion(remediationState);
@@ -4761,7 +4963,7 @@ if(remediationState.active){
             currentQuestion.hint ? "💡 Hint: " + currentQuestion.hint : "";
 
         msgElement.innerHTML =
-            `<span class='fade-out-text'>Your control is still unstable. Repair the weakness before advancing.</span>`;
+            `<span class='fade-out-text'>${getRecoveryLine("miss")}</span>`;
 
         displayQuestion();
         return;
@@ -5181,6 +5383,11 @@ function generateCode(name, acc, streak, total){
 // This is a PRESENTATION layer, not a logic layer.
 // =============================================     
 function handleVictory() {
+    localStorage.setItem(HUB_STARTED_KEY, "true");
+    localStorage.setItem(HUB_COMPLETE_KEY, "true");
+    localStorage.setItem(HUB_STATUS_KEY, "cleared");
+    localStorage.setItem(HUB_ROOM_KEY, "30");
+
     clearSavedGame();
     bgMusic.pause();
     bossMusic.pause();
@@ -5430,7 +5637,7 @@ function sendGameData(data) {
     timestamp: new Date().toISOString(),
     runID: data.runID || localStorage.getItem("gauntletRunID") || "",
     token: data.token || "",
-    version: "Agency-ms-telemetry-v1",
+    version: "Agency-ms-telemetry-v3.5",
     userAgent: navigator.userAgent || "",
     game: data.game || "The Agency Protocol",
     event: data.event || "",
@@ -5479,6 +5686,7 @@ function sendGameData(data) {
 </script>
 </body>
 </html>
+
 
 
 
