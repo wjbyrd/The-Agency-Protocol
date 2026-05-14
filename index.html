@@ -555,6 +555,44 @@ button:active {
         inset 0 0 10px rgba(0,0,0,0.88);
 }
 
+.return-menu-btn{
+    position: absolute;
+    top: 12px;
+    right: 12px;
+
+    padding: 6px 12px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+
+    color: #dbeafe;
+    background: linear-gradient(180deg, #0f172a, #020617);
+
+    border: 1px solid rgba(56,189,248,0.30);
+    border-radius: 6px;
+    cursor: pointer;
+
+    box-shadow:
+        0 0 10px rgba(56,189,248,0.22),
+        inset 0 0 7px rgba(0,0,0,0.82);
+
+    transition: all 0.15s ease;
+}
+
+.return-menu-btn:hover {
+    color: #f0c86a;
+    background: linear-gradient(180deg, #1e293b, #0f172a);
+    border-color: rgba(240,200,106,0.62);
+
+    box-shadow:
+        0 0 16px rgba(56,189,248,0.34),
+        inset 0 0 8px rgba(0,0,0,0.78);
+}
+
+.return-menu-btn:active {
+    transform: scale(0.95);
+}
+
 .continue-btn {
     background: linear-gradient(180deg, #1e293b, #020617);
     color: #f0c86a;
@@ -1037,6 +1075,63 @@ button:active {
       0 0 16px rgba(56,189,248,0.16),
       0 2px 6px rgba(0,0,0,0.92);
 }
+
+.game-modal{
+  position:fixed;
+  inset:0;
+  z-index:500;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background:rgba(2,6,23,0.76);
+  backdrop-filter:blur(6px);
+}
+
+.game-modal-card{
+  width:min(520px, 100%);
+  padding:28px;
+  border-radius:18px;
+  background:
+    radial-gradient(circle at top,
+      rgba(56,189,248,0.16),
+      rgba(15,23,42,0.90) 48%,
+      rgba(2,6,23,0.99));
+  border:1px solid rgba(240,200,106,0.42);
+  box-shadow:
+    0 0 34px rgba(0,0,0,0.88),
+    0 0 38px rgba(56,189,248,0.24),
+    0 0 46px rgba(240,200,106,0.14),
+    inset 0 0 30px rgba(0,0,0,0.72);
+  text-align:center;
+}
+
+.game-modal-card h2{
+  margin:0 0 12px;
+  color:#f0c86a;
+  font-size:30px;
+  letter-spacing:2px;
+  text-transform:uppercase;
+}
+
+.game-modal-card p{
+  margin:0 0 24px;
+  color:#dbeafe;
+  font-size:18px;
+  line-height:1.45;
+}
+
+.game-modal-actions{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+}
+
+.secondary-modal-btn{
+  color:#dbeafe;
+  border-color:rgba(56,189,248,0.42);
+}
 /* =========================================
    9. ANIMATION SYSTEM — SAFE TO CUSTOMIZE (WITH CARE)
 ========================================= */
@@ -1417,7 +1512,8 @@ Every pixel matters.
 ========================================= */
 
 @media (max-width: 768px){
-  .fullscreenBtn{
+  .fullscreenBtn,
+  .return-menu-btn{
     display: none !important;
   }
 
@@ -1739,6 +1835,194 @@ TIP:
 /* =========================================
    13. SOUND ON/OFF
 ========================================= */
+
+/* =========================================
+   13. MODE SELECT + TIMED TRIAL HUD
+========================================= */
+
+.mode-select-screen{
+  position:fixed;
+  inset:0;
+  z-index:110;
+  align-items:center;
+  justify-content:center;
+  padding:30px;
+  background:
+    linear-gradient(rgba(2,6,23,0.48), rgba(2,6,23,0.82)),
+    url('start screen image.png');
+  background-size:cover;
+  background-position:center;
+}
+
+.mode-select-panel{
+  width:min(1100px, 100%);
+  padding:28px;
+  border-radius:20px;
+  background:rgba(2,6,23,0.86);
+  border:1px solid rgba(240,200,106,0.34);
+  box-shadow:
+    0 0 36px rgba(0,0,0,0.84),
+    0 0 44px rgba(56,189,248,0.18),
+    inset 0 0 36px rgba(0,0,0,0.66);
+  text-align:center;
+}
+
+.mode-title{
+  margin:0;
+  font-size:clamp(38px, 5vw, 68px);
+  letter-spacing:4px;
+  color:#f0c86a;
+  text-shadow:
+    0 0 14px rgba(240,200,106,0.68),
+    0 0 28px rgba(56,189,248,0.24),
+    0 3px 8px rgba(0,0,0,0.92);
+}
+
+.mode-subtitle{
+  margin:8px auto 26px;
+  color:#bae6fd;
+  font-size:20px;
+}
+
+.mode-grid{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0, 1fr));
+  gap:18px;
+}
+
+.mode-card{
+  min-height:330px;
+  padding:0;
+  overflow:hidden;
+  border-radius:18px;
+  border:1px solid rgba(56,189,248,0.30);
+  background:rgba(2,6,23,0.94);
+  color:#e5e7eb;
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  text-align:left;
+  box-shadow:
+    0 0 22px rgba(0,0,0,0.70),
+    inset 0 0 18px rgba(0,0,0,0.60);
+  transition:transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+}
+
+.mode-card:hover{
+  transform:translateY(-6px) scale(1.02);
+  border-color:rgba(240,200,106,0.78);
+  box-shadow:
+    0 0 28px rgba(56,189,248,0.32),
+    0 0 38px rgba(240,200,106,0.20),
+    inset 0 0 18px rgba(0,0,0,0.62);
+}
+
+.mode-card img{
+  width:100%;
+  height:240px;
+  object-fit:cover;
+  border-bottom:1px solid rgba(240,200,106,0.22);
+  background:linear-gradient(180deg, rgba(15,23,42,0.96), rgba(2,6,23,0.98));
+}
+
+.mode-card-title{
+  display:block;
+  padding:18px 16px 10px;
+  font-size:22px;
+  font-weight:700;
+  letter-spacing:1px;
+  color:#f0c86a;
+  text-align:center;
+}
+
+.mode-card-text{
+  display:block;
+  padding:8px 22px 24px;
+  font-size:15px;
+  line-height:1.35;
+  color:rgba(219,234,254,0.88);
+  text-align:left;
+}
+
+.mode-back-btn{
+  margin-top:18px;
+  min-width:140px;
+}
+
+.sr-only{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0, 0, 0, 0);
+  white-space:nowrap;
+  border:0;
+}
+
+.timed-mode-hud{
+  margin: 8px auto 12px;
+  padding: 8px 14px;
+  width: fit-content;
+  border-radius: 999px;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(180deg, rgba(15,23,42,0.90), rgba(2,6,23,0.96));
+  border: 1px solid rgba(240,200,106,0.48);
+  box-shadow:
+    0 0 16px rgba(56,189,248,0.24),
+    0 0 26px rgba(240,200,106,0.14),
+    inset 0 0 12px rgba(0,0,0,0.76);
+}
+
+.timer-label{
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #bae6fd;
+}
+
+.timer-display{
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #f0c86a;
+  text-shadow:
+    0 0 10px rgba(240,200,106,0.62),
+    0 0 18px rgba(56,189,248,0.24);
+}
+
+.timer-warning{
+  animation: timerWarningPulse .75s ease-in-out infinite alternate;
+}
+
+@keyframes timerWarningPulse{
+  from{ transform: scale(1); }
+  to{
+    transform: scale(1.08);
+    text-shadow:
+      0 0 14px rgba(248,113,113,0.90),
+      0 0 24px rgba(240,200,106,0.42);
+  }
+}
+
+@media(max-width:900px){
+  .mode-grid{ grid-template-columns:1fr 1fr; }
+}
+
+@media(max-width:560px){
+  .mode-select-screen{
+    padding:14px;
+    align-items:flex-start;
+    overflow-y:auto;
+  }
+
+  .mode-grid{ grid-template-columns:1fr; }
+  .mode-card{ min-height:250px; }
+  .mode-card img{ height:145px; }
+}
+
 .sound-toggle{
   position:fixed;
   right:28px;
@@ -1836,7 +2120,7 @@ Respect structure strictly.
     <h1 class="title">THE AGENCY PROTOCOL</h1>
     <h2 class="subtitle">Hidden Risk. Aligned Incentives.</h2>
     <input id="emailInput" type="email" placeholder="Enter your school email" class="name-input">
-    <button class="start-btn" onclick="startNewRun()">ENTER THE PROTOCOL</button>
+    <button class="start-btn" onclick="showModeSelect()">ENTER THE PROTOCOL</button>
 
     <button id="continueRunBtn"
             class="start-btn secondary-start-btn"
@@ -1845,10 +2129,41 @@ Respect structure strictly.
         CONTINUE PROTOCOL RUN
     </button>
   </div>
+
+</div>
+
+<div id="modeSelectScreen" class="mode-select-screen" style="display:none;">
+  <div class="mode-select-panel">
+    <h1 class="mode-title">CHOOSE YOUR OPERATION</h1>
+    <p class="mode-subtitle">Select how you want to enter The Agency Protocol.</p>
+
+    <div class="mode-grid">
+      <button class="mode-card" onclick="startSelectedMode('standard')" aria-label="Standard Campaign. Full 30-room protocol with bosses, artifacts, setbacks, save and resume status, and agency file progress.">
+        <img src="mode_standard.png" onerror="this.onerror=null;this.src='start screen image.png';" alt="" aria-hidden="true">
+        <span class="mode-card-title">Standard Campaign</span>
+        <span class="mode-card-text">Full 30-room protocol with bosses, artifacts, setbacks, and agency file progress.</span>
+      </button>
+
+      <button class="mode-card" onclick="startSelectedMode('timed')" aria-label="Timed Trial. Ten minute run with visible countdown, normal setbacks, rapid guessing penalties, and results saved separately.">
+        <img src="mode_timed.png" onerror="this.onerror=null;this.src='hallway1.png';" alt="" aria-hidden="true">
+        <span class="mode-card-title">Timed Trial</span>
+        <span class="mode-card-text">Ten minutes. Correct answers advance. Misses push you back.</span>
+      </button>
+
+      <button class="mode-card" onclick="startSelectedMode('exam')" aria-label="Exam Drill. No bosses, no artifacts, no agency file progress. Just adaptive practice.">
+        <img src="mode_exam.png" onerror="this.onerror=null;this.src='question_background_image.png';" alt="" aria-hidden="true">
+        <span class="mode-card-title">Exam Drill</span>
+        <span class="mode-card-text">No bosses. No artifacts. No agency file progress. Just adaptive practice.</span>
+      </button>
+    </div>
+
+    <button class="mode-back-btn" onclick="returnToTitleScreen()">BACK</button>
+  </div>
 </div>
 
 <div class="dungeon-container">
     <button class="fullscreenBtn" onclick="goFullscreen()">FULLSCREEN</button>
+    <button id="returnMenuBtn" class="return-menu-btn" onclick="confirmReturnToModeMenu()">BATTLE MENU</button>
 	  <button id="soundToggle" class="sound-toggle" onclick="toggleGameSound()" aria-label="Toggle sound">Sound On</button>
 
 <!-- =========================================
@@ -1921,6 +2236,12 @@ or simplify this section.
             </div>
 
             <div id="streakDisplay"></div>
+
+            <div id="timedModeHud" class="timed-mode-hud" style="display:none;">
+                <span class="timer-label">Timed Trial</span>
+                <span id="timerDisplay" class="timer-display">10:00</span>
+            </div>
+
             <p id="bossMessage"></p>
 
             <div id="questionContainer">
@@ -1941,6 +2262,19 @@ or simplify this section.
         </div>
     </div>
 </div>
+
+</div>
+
+<div id="gameModal" class="game-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="gameModalTitle">
+  <div class="game-modal-card">
+    <h2 id="gameModalTitle">Signal Warning</h2>
+    <p id="gameModalText"></p>
+
+    <div class="game-modal-actions">
+      <button id="gameModalConfirm" class="continue-btn">Continue</button>
+      <button id="gameModalCancel" class="continue-btn secondary-modal-btn" style="display:none;">Cancel</button>
+    </div>
+  </div>
 </div>
 
 <!-- =========================================
@@ -2133,7 +2467,42 @@ const HUB_COMPLETE_KEY = "managerialHub_agency_complete";
 const HUB_STATUS_KEY = "managerialHub_agency_status";
 const HUB_ROOM_KEY = "managerialHub_agency_room";
 
+let gameMode = "standard";
+let timedModeDurationMs = 10 * 60 * 1000;
+let timedModeEndTime = null;
+let timedModeTimerInterval = null;
+let timedHighestRoom = 1;
+let timedSetbacks = 0;
+
+function modeAllowsSave(){
+    return gameMode === "standard";
+}
+
+function modeAllowsHubProgress(){
+    return gameMode === "standard";
+}
+
+function getSaveKey(){
+    return `${SAVE_KEY}_${gameMode || "standard"}`;
+}
+
+function isBossRoomForMode(r){
+    if(gameMode === "exam") return false;
+    if(gameMode === "timed") return false;
+    if(gameMode === "bossRush") return true;
+    return r === 10 || r === 20 || r === 30;
+}
+
+function getModeDisplayName(){
+    if(gameMode === "timed") return "Timed Trial";
+    if(gameMode === "exam") return "Exam Drill";
+    if(gameMode === "bossRush") return "Boss Rush";
+    return "Standard Campaign";
+}
+
 function saveGameState(){
+    if(!modeAllowsSave()) return;
+
     const saveData = {
         room,
         bossHealth,
@@ -2145,6 +2514,7 @@ function saveGameState(){
         username,
         studentEmail,
         runID,
+        gameMode,
         conceptMemory,
         masteryState,
         adaptiveMode,
@@ -2163,11 +2533,15 @@ function saveGameState(){
         }
     };
 
-    localStorage.setItem(SAVE_KEY, JSON.stringify(saveData));
+    localStorage.setItem(getSaveKey(), JSON.stringify(saveData));
     localStorage.setItem("gauntletRoom", String(room));
-    localStorage.setItem(HUB_STARTED_KEY, "true");
-    localStorage.setItem(HUB_STATUS_KEY, "active");
-    localStorage.setItem(HUB_ROOM_KEY, String(room));
+
+    if(modeAllowsHubProgress()){
+        localStorage.setItem(HUB_STARTED_KEY, "true");
+        localStorage.setItem(HUB_STATUS_KEY, "active");
+        localStorage.setItem(HUB_ROOM_KEY, String(room));
+        localStorage.setItem("selectedMission", HUB_MISSION_KEY);
+    }
 
     const autosave = document.getElementById("autosave");
     if(autosave){
@@ -2176,7 +2550,8 @@ function saveGameState(){
 }
 
 function loadSavedGame(){
-    const rawSave = localStorage.getItem(SAVE_KEY);
+    const rawSave = localStorage.getItem(getSaveKey())
+        || (gameMode === "standard" ? localStorage.getItem(SAVE_KEY) : null);
     if(!rawSave) return false;
 
     try {
@@ -2193,6 +2568,7 @@ function loadSavedGame(){
         username = saveData.username || username || "";
         studentEmail = saveData.studentEmail || studentEmail || "";
         runID = saveData.runID || runID || "";
+        gameMode = saveData.gameMode || gameMode || "standard";
 
         conceptMemory = saveData.conceptMemory || {};
         masteryState = saveData.masteryState || { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
@@ -2214,17 +2590,22 @@ function loadSavedGame(){
         return true;
     } catch(error){
         console.warn("Saved Agency Protocol run could not be loaded:", error);
-        localStorage.removeItem(SAVE_KEY);
+        localStorage.removeItem(getSaveKey());
+        if(gameMode === "standard") localStorage.removeItem(SAVE_KEY);
         return false;
     }
 }
 
 function clearSavedGame(){
-    localStorage.removeItem(SAVE_KEY);
-    localStorage.removeItem("gauntletRoom");
-    localStorage.removeItem("vaultLedger");
-    localStorage.removeItem("vaultLens");
-    localStorage.removeItem("vaultAlgorithm");
+    localStorage.removeItem(getSaveKey());
+    if(gameMode === "standard") localStorage.removeItem(SAVE_KEY);
+
+    if(modeAllowsSave()){
+        localStorage.removeItem("gauntletRoom");
+        localStorage.removeItem("vaultLedger");
+        localStorage.removeItem("vaultLens");
+        localStorage.removeItem("vaultAlgorithm");
+    }
 }
 
 function generatePseudonymFromEmail(email) {
@@ -3074,27 +3455,194 @@ if (savedEmail && emailInput) {
     emailInput.value = savedEmail;
 }
 
-function hasSavedGame(){
-    return !!localStorage.getItem(SAVE_KEY);
+function hasSavedGame(mode = "standard"){
+    return !!localStorage.getItem(`${SAVE_KEY}_${mode}`)
+        || (mode === "standard" && !!localStorage.getItem(SAVE_KEY));
+}
+
+function validateAndStoreEmailForModeSelect(){
+    let inputEmail = document.getElementById("emailInput").value.trim().toLowerCase();
+
+    if (!inputEmail) {
+        alert("An email is required to enter the Agency.");
+        return false;
+    }
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailPattern.test(inputEmail)) {
+        alert("Enter a valid email address.");
+        return false;
+    }
+
+    studentEmail = inputEmail;
+    username = generatePseudonymFromEmail(studentEmail);
+
+    localStorage.setItem("gauntletEmail", studentEmail);
+    localStorage.setItem("gauntletUser", username);
+
+    return true;
+}
+
+function showModeSelect(){
+    if(!validateAndStoreEmailForModeSelect()) return;
+
+    document.getElementById("startScreen").style.display = "none";
+    const modeScreen = document.getElementById("modeSelectScreen");
+    if(modeScreen) modeScreen.style.display = "flex";
+}
+
+function returnToTitleScreen(){
+    const modeScreen = document.getElementById("modeSelectScreen");
+    if(modeScreen) modeScreen.style.display = "none";
+    document.getElementById("startScreen").style.display = "flex";
+    showContinueButtonIfSaved();
+}
+
+function startSelectedMode(mode){
+    gameMode = mode || "standard";
+    localStorage.setItem("agencyProtocolCurrentMode", gameMode);
+
+    const modeScreen = document.getElementById("modeSelectScreen");
+    if(modeScreen) modeScreen.style.display = "none";
+
+    if(gameMode === "standard"){
+        startGame(false);
+        return;
+    }
+
+    resetRunStateForNewMode();
+    startGame(false);
+}
+
+let activeModalConfirmAction = null;
+let activeModalCancelAction = null;
+
+function showGameModal({
+    title = "Signal Warning",
+    text = "",
+    confirmText = "Continue",
+    cancelText = "",
+    onConfirm = null,
+    onCancel = null
+} = {}){
+    const modal = document.getElementById("gameModal");
+    const titleEl = document.getElementById("gameModalTitle");
+    const textEl = document.getElementById("gameModalText");
+    const confirmBtn = document.getElementById("gameModalConfirm");
+    const cancelBtn = document.getElementById("gameModalCancel");
+
+    if(!modal || !titleEl || !textEl || !confirmBtn || !cancelBtn){
+        console.warn("Game modal elements are missing.");
+        return;
+    }
+
+    activeModalConfirmAction = onConfirm;
+    activeModalCancelAction = onCancel;
+
+    titleEl.innerText = title;
+    textEl.innerText = text;
+    confirmBtn.innerText = confirmText;
+
+    if(cancelText){
+        cancelBtn.innerText = cancelText;
+        cancelBtn.style.display = "inline-block";
+    } else {
+        cancelBtn.style.display = "none";
+    }
+
+    modal.style.display = "flex";
+
+    confirmBtn.onclick = function(){
+        const action = activeModalConfirmAction;
+        closeGameModal();
+
+        if(typeof action === "function"){
+            action();
+        }
+    };
+
+    cancelBtn.onclick = function(){
+        const action = activeModalCancelAction;
+        closeGameModal();
+
+        if(typeof action === "function"){
+            action();
+        }
+    };
+}
+
+function closeGameModal(){
+    const modal = document.getElementById("gameModal");
+    if(modal) modal.style.display = "none";
+
+    activeModalConfirmAction = null;
+    activeModalCancelAction = null;
+}
+
+function confirmReturnToModeMenu(){
+    showGameModal({
+        title: "Return to Operation Menu?",
+        text: "Standard Campaign progress will be saved. Timed Trial and Exam Drill attempts will end.",
+        confirmText: "Return",
+        cancelText: "Stay",
+        onConfirm: function(){
+            if(gameMode === "standard"){
+                saveGameState();
+            }
+
+            if(gameMode === "timed"){
+                endTimedAttemptEarly();
+                return;
+            }
+
+            returnToModeSelectFromRun();
+        }
+    });
+}
+
+function endTimedAttemptEarly(){
+    stopTimedModeClock();
+
+    const accuracy = totalAttempts > 0
+        ? Math.round((correctAnswers / totalAttempts) * 100)
+        : 0;
+
+    localStorage.setItem("agencyProtocolTimedLastRoom", String(room));
+    localStorage.setItem("agencyProtocolTimedLastAccuracy", String(accuracy));
+    localStorage.setItem("agencyProtocolTimedLastAttempts", String(totalAttempts));
+    localStorage.setItem("agencyProtocolTimedLastStreak", String(maxStreak));
+    localStorage.setItem("agencyProtocolTimedLastSetbacks", String(timedSetbacks));
+
+    const bestRoom = Number(localStorage.getItem("agencyProtocolTimedBestRoom") || 0);
+    const cappedRoom = Math.min(Math.max(room, timedHighestRoom), 30);
+    if(cappedRoom > bestRoom){
+        localStorage.setItem("agencyProtocolTimedBestRoom", String(cappedRoom));
+    }
+
+    returnToModeSelectFromRun();
 }
 
 function showContinueButtonIfSaved(){
     const btn = document.getElementById("continueRunBtn");
     if(!btn) return;
 
-    btn.style.display = hasSavedGame() ? "block" : "none";
+    btn.style.display = hasSavedGame("standard") ? "block" : "none";
 }
 
 function startNewRun(){
+    gameMode = "standard";
     clearSavedGame();
     startGame(false);
 }
 
 function continueSavedRun(){
+    gameMode = "standard";
     startGame(true);
 }
 
 showContinueButtonIfSaved();
+	 
 // =============================================
 // GAME INITIALIZATION — PARTIAL CUSTOMIZATION
 // =============================================
@@ -3151,10 +3699,13 @@ function startGame(shouldResume = false) {
     localStorage.setItem("gauntletEmail", studentEmail);
     localStorage.setItem("gauntletUser", username);
     localStorage.setItem("gauntletRunID", runID);
-    localStorage.setItem(HUB_STARTED_KEY, "true");
-    localStorage.setItem(HUB_STATUS_KEY, "active");
-    localStorage.setItem(HUB_ROOM_KEY, String(room));
-    localStorage.setItem("selectedMission", HUB_MISSION_KEY);
+
+    if(modeAllowsHubProgress()){
+        localStorage.setItem(HUB_STARTED_KEY, "true");
+        localStorage.setItem(HUB_STATUS_KEY, "active");
+        localStorage.setItem(HUB_ROOM_KEY, String(room || 1));
+        localStorage.setItem("selectedMission", HUB_MISSION_KEY);
+    }
 
     sendGameData({
         runID: runID,
@@ -3186,11 +3737,21 @@ function startGame(shouldResume = false) {
         rapidGuessHistory = [];
         rapidGuessWarnings = 0;
         rapidGuessLocked = false;
+        timedHighestRoom = 1;
+        timedSetbacks = 0;
 
-        localStorage.removeItem("gauntletRoom");
-        localStorage.removeItem("vaultLedger");
-        localStorage.removeItem("vaultLens");
-        localStorage.removeItem("vaultAlgorithm");
+        if(modeAllowsSave()){
+            localStorage.removeItem("gauntletRoom");
+            localStorage.removeItem("vaultLedger");
+            localStorage.removeItem("vaultLens");
+            localStorage.removeItem("vaultAlgorithm");
+        }
+
+        if(modeAllowsHubProgress()){
+            localStorage.removeItem(HUB_COMPLETE_KEY);
+            localStorage.setItem(HUB_STATUS_KEY, "active");
+            localStorage.setItem(HUB_ROOM_KEY, "1");
+        }
 
         questionHistory = {
             easy: [], medium: [], hard: [], elite: [], calculation: [],
@@ -3208,6 +3769,10 @@ function startGame(shouldResume = false) {
 // =============================================
 // Shows main game elements and restores vault visuals
     document.getElementById("startScreen").style.display = "none";
+    const modeScreen = document.getElementById("modeSelectScreen");
+    if(modeScreen) modeScreen.style.display = "none";
+    document.querySelector(".top-panel").style.display = "flex";
+    document.getElementById("gameShell").style.display = "flex";
     document.getElementById("gameBox").style.display = "block";
     document.getElementById("artifactVault").style.display = "block";
     document.querySelectorAll(".torch").forEach(t => t.style.display = "block");
@@ -3231,10 +3796,275 @@ function startGame(shouldResume = false) {
     }
   
 // Start game loop: music + timer + first question
+    initializeRunForMode(gameMode);
     bgMusic.play().catch(e => console.log("Audio started"));
     startTime = Date.now(); 
     loadQuestion();
 }
+
+function resetRunStateForNewMode(){
+    room = 1;
+    bossHealth = 3;
+    bossCheckpoint = 1;
+    streak = 0;
+    maxStreak = 0;
+    totalAttempts = 0;
+    correctAnswers = 0;
+    bossPool = [];
+    if(typeof calcBag !== "undefined") calcBag = [];
+    conceptMemory = {};
+    masteryState = { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
+    tagHistory = [];
+    lastTypes = [];
+    adaptiveMode = "support";
+    resetRemediationState();
+    rapidGuessHistory = [];
+    rapidGuessWarnings = 0;
+    rapidGuessLocked = false;
+    timedHighestRoom = 1;
+    timedSetbacks = 0;
+
+    questionHistory = {
+        easy: [], medium: [], hard: [], elite: [], calculation: [],
+        easyBoss: [], mediumBoss: [], finalBoss: []
+    };
+
+    usedQuestions = {
+        easy: [], medium: [], hard: [], elite: [],
+        easyBoss: [], mediumBoss: [], finalBoss: []
+    };
+}
+
+function initializeRunForMode(mode){
+    gameMode = mode || "standard";
+
+    const autosave = document.getElementById("autosave");
+    if(autosave){
+        autosave.innerText = gameMode === "timed"
+            ? "⏱ Timed Trial Active"
+            : gameMode === "exam"
+                ? "✎ Exam Drill Active"
+                : gameMode === "bossRush"
+                    ? "⚔ Boss Rush Active"
+                    : "💾 Progress Saved Locally";
+    }
+
+    if(gameMode === "timed"){
+        startTimedModeClock();
+    } else {
+        stopTimedModeClock();
+    }
+}
+
+function startTimedModeClock(){
+    timedModeEndTime = Date.now() + timedModeDurationMs;
+
+    const hud = document.getElementById("timedModeHud");
+    if(hud) hud.style.display = "flex";
+
+    updateTimedModeClock();
+
+    if(timedModeTimerInterval){
+        clearInterval(timedModeTimerInterval);
+    }
+
+    timedModeTimerInterval = setInterval(updateTimedModeClock, 250);
+}
+
+function stopTimedModeClock(){
+    if(timedModeTimerInterval){
+        clearInterval(timedModeTimerInterval);
+        timedModeTimerInterval = null;
+    }
+
+    const hud = document.getElementById("timedModeHud");
+    if(hud) hud.style.display = "none";
+
+    const timerDisplay = document.getElementById("timerDisplay");
+    if(timerDisplay){
+        timerDisplay.classList.remove("timer-warning");
+        timerDisplay.innerText = "10:00";
+    }
+}
+
+function updateTimedModeClock(){
+    if(gameMode !== "timed" || !timedModeEndTime) return;
+
+    const remainingMs = Math.max(0, timedModeEndTime - Date.now());
+    const totalSeconds = Math.ceil(remainingMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    const timerDisplay = document.getElementById("timerDisplay");
+    if(timerDisplay){
+        timerDisplay.innerText = `${minutes}:${String(seconds).padStart(2, "0")}`;
+        timerDisplay.classList.toggle("timer-warning", remainingMs <= 60 * 1000);
+    }
+
+    if(remainingMs <= 0){
+        endTimedModeRun();
+    }
+}
+
+function endTimedModeRun(){
+    if(gameMode !== "timed") return;
+
+    stopTimedModeClock();
+    gameMode = "timed-complete";
+
+    const accuracy = totalAttempts > 0
+        ? Math.round((correctAnswers / totalAttempts) * 100)
+        : 0;
+
+    const cappedHighest = Math.min(timedHighestRoom, 30);
+    const bestRoom = Number(localStorage.getItem("agencyProtocolTimedBestRoom") || 0);
+    if(cappedHighest > bestRoom){
+        localStorage.setItem("agencyProtocolTimedBestRoom", String(cappedHighest));
+    }
+
+    localStorage.setItem("agencyProtocolTimedLastRoom", String(Math.min(room, 30)));
+    localStorage.setItem("agencyProtocolTimedLastHighestRoom", String(cappedHighest));
+    localStorage.setItem("agencyProtocolTimedLastAccuracy", String(accuracy));
+    localStorage.setItem("agencyProtocolTimedLastAttempts", String(totalAttempts));
+    localStorage.setItem("agencyProtocolTimedLastStreak", String(maxStreak));
+    localStorage.setItem("agencyProtocolTimedLastSetbacks", String(timedSetbacks));
+
+    sendGameData({
+        runID: runID,
+        game: "The Agency Protocol",
+        event: "timed_complete",
+        user: username,
+        email: studentEmail,
+        room: room,
+        questionId: 0,
+        correct: 1,
+        tag: "",
+        type: "",
+        objective: "",
+        responseTime: 0,
+        attempt: totalAttempts,
+        streak: streak,
+        elapsedTime: startTime ? (Date.now() - startTime) : 0,
+        adaptiveMode: "timed_complete",
+        totalTime: timedModeDurationMs,
+        accuracy: accuracy / 100,
+        maxStreak: maxStreak,
+        totalAttempts: totalAttempts
+    });
+
+    document.getElementById("bossMessage").innerText = "";
+    document.getElementById("formulaHint").innerText = "";
+    document.getElementById("artifactDrop").style.display = "none";
+    document.getElementById("questionImageBox").style.display = "none";
+
+    document.getElementById("question").innerHTML = `
+        <span class="boss-title">TIME EXPIRED</span>
+        <div class="boss-q">
+            You reached as far as Room ${cappedHighest}.<br><br>
+            Final Room: ${Math.min(room, 30)}<br>
+            Accuracy: ${accuracy}%<br>
+            Total Attempts: ${totalAttempts}<br>
+            Best Streak: ${maxStreak}<br>
+            Setbacks Taken: ${timedSetbacks}
+        </div>
+    `;
+
+    document.getElementById("answers").innerHTML = `
+        <button class="continue-btn" onclick="restartTimedMode()">Retry Timed Trial</button>
+        <button class="continue-btn" onclick="returnToModeSelectFromRun()">Choose Another Operation</button>
+    `;
+
+    document.getElementById("message").innerText = "The trial ends. The file remains open.";
+}
+
+function handlePracticeModeComplete(){
+    stopTimedModeClock();
+
+    const accuracy = totalAttempts > 0
+        ? Math.round((correctAnswers / totalAttempts) * 100)
+        : 0;
+
+    sendGameData({
+        runID: runID,
+        game: "The Agency Protocol",
+        event: `${gameMode}_complete`,
+        user: username,
+        email: studentEmail,
+        room: room,
+        questionId: 0,
+        correct: 1,
+        tag: "",
+        type: "",
+        objective: "",
+        responseTime: 0,
+        attempt: totalAttempts,
+        streak: streak,
+        elapsedTime: startTime ? (Date.now() - startTime) : 0,
+        adaptiveMode: `${gameMode}_complete`,
+        totalTime: startTime ? (Date.now() - startTime) : 0,
+        accuracy: accuracy / 100,
+        maxStreak: maxStreak,
+        totalAttempts: totalAttempts
+    });
+
+    document.getElementById("bossMessage").innerText = "";
+    document.getElementById("formulaHint").innerText = "";
+    document.getElementById("artifactDrop").style.display = "none";
+    document.getElementById("questionImageBox").style.display = "none";
+
+    document.getElementById("question").innerHTML = `
+        <span class="boss-title">${getModeDisplayName().toUpperCase()} COMPLETE</span>
+        <div class="boss-q">
+            You reached the end of this practice path.<br><br>
+            Accuracy: ${accuracy}%<br>
+            Total Attempts: ${totalAttempts}<br>
+            Best Streak: ${maxStreak}
+        </div>
+    `;
+
+    document.getElementById("answers").innerHTML = `
+        <button class="continue-btn" onclick="returnToModeSelectFromRun()">Choose Another Operation</button>
+    `;
+
+    document.getElementById("message").innerText = "Practice complete. The campaign record was not changed.";
+}
+
+function restartTimedMode(){
+    gameMode = "timed";
+    resetRunStateForNewMode();
+    startSelectedMode("timed");
+}
+
+function returnToModeSelectFromRun(){
+    stopTimedModeClock();
+    document.getElementById("gameBox").style.display = "none";
+    document.getElementById("artifactVault").style.display = "none";
+    document.getElementById("modeSelectScreen").style.display = "flex";
+    document.querySelector(".top-panel").style.display = "none";
+    document.getElementById("gameShell").style.display = "none";
+}
+
+function getDifficultyForMode(){
+    if(gameMode === "exam" || gameMode === "timed"){
+        return (room <= 10) ? "easy"
+            : (room <= 20) ? "medium"
+            : "hard";
+    }
+
+    if(gameMode === "bossRush"){
+        return (room <= 10) ? "easyBoss"
+            : (room <= 20) ? "mediumBoss"
+            : "finalBoss";
+    }
+
+    return (room <= 9) ? "easy"
+         : (room === 10) ? "easyBoss"
+         : (room <= 19) ? "medium"
+         : (room === 20) ? "mediumBoss"
+         : (room <= 29) ? "hard"
+         : "finalBoss";
+}
+
 	 
 // =============================================
 // INPUT SHORTCUT — SAFE TO KEEP OR REMOVE
@@ -3246,10 +4076,10 @@ document.getElementById("emailInput").addEventListener("keypress", function(even
     if (event.key === "Enter") {
         event.preventDefault();
 
-        if(hasSavedGame()){
+        if(hasSavedGame("standard")){
             continueSavedRun();
         } else {
-            startNewRun();
+            showModeSelect();
         }
     }
 });
@@ -4313,6 +5143,16 @@ function playFinalBossMusic(){
 // Changing logic here will break progression.
      
 function loadQuestion() {
+    if(gameMode === "timed" && timedModeEndTime && Date.now() >= timedModeEndTime){
+        endTimedModeRun();
+        return;
+    }
+
+    if((gameMode === "timed" || gameMode === "exam") && room > 30){
+        handlePracticeModeComplete();
+        return;
+    }
+
     questionStartTime = Date.now(); 
     updateMazeTrack();
     const questionElement = document.getElementById("question");
@@ -4327,14 +5167,9 @@ function loadQuestion() {
 	imageBox.style.display = "none";
 
     // 1. Determine Difficulty and Boss Status
-	let diff = (room <= 9) ? "easy"
-         : (room === 10) ? "easyBoss"
-         : (room <= 19) ? "medium"
-         : (room === 20) ? "mediumBoss"
-         : (room <= 29) ? "hard"
-         : "finalBoss";
+	let diff = getDifficultyForMode();
 
-   const isBoss = diff.includes("Boss");
+   const isBoss = diff.includes("Boss") && gameMode !== "exam" && gameMode !== "timed";
 
    // Only reset health if the bossPool is currently empty (meaning a new encounter)
      if (isBoss && (!bossPool || bossPool.length === 0)) {
@@ -4359,9 +5194,10 @@ function loadQuestion() {
     gameBox.classList.toggle("boss-mode", isBoss);
    
     // 2. UI & Progress Updates
-    document.getElementById("progressFill").style.width = (room / 30 * 100) + "%";
-    document.getElementById("areaDisplay").innerText = `${getAreaName(room)} (${room}/30)`;
-    document.getElementById("srAnnouncements").innerText = `Entering ${getAreaName(room)}. Room ${room} of 30.`;
+    document.getElementById("progressFill").style.width = (Math.min(room, 30) / 30 * 100) + "%";
+    const roomCap = (gameMode === "timed" || gameMode === "exam") ? Math.min(room, 30) : room;
+    document.getElementById("areaDisplay").innerText = `${getModeDisplayName()} — ${getAreaName(roomCap)} (${roomCap}/30)`;
+    document.getElementById("srAnnouncements").innerText = `Entering ${getModeDisplayName()}. ${getAreaName(roomCap)}. Room ${roomCap} of 30.`;
 
     // 3. Select the Question (CHANGE BOSS NAMES AND PNG)
     if (isBoss) {
@@ -4625,6 +5461,11 @@ function checkRapidGuessing(isCorrect, responseTime){
 // Check for artifact names and CHANGE
      
 function answer(choice) {
+    if(gameMode === "timed" && timedModeEndTime && Date.now() >= timedModeEndTime){
+        endTimedModeRun();
+        return;
+    }
+
     // --- GLOBAL MEMORY DECAY ---
     for(let tag in conceptMemory){
     conceptMemory[tag] *= 0.95;
@@ -4632,7 +5473,7 @@ function answer(choice) {
    
     totalAttempts++;
    
-    const isBossRoom = (room === 10 || room === 20 || room === 30);
+    const isBossRoom = isBossRoomForMode(room);
     const msgElement = document.getElementById("message");
     const wizard = document.getElementById("wizardImage");
 const isCorrect = (choice === currentQuestion.a);
@@ -4899,6 +5740,7 @@ saveGameState();
     // AND it wasn't a Boss Room (or a Detour).
    msgElement.innerHTML = "";
    room++;
+   if(gameMode === "timed") timedHighestRoom = Math.max(timedHighestRoom, Math.min(room, 30));
    saveGameState();
    showHallwayTransition(currentQuestion.feedback);
    return;
@@ -5015,12 +5857,18 @@ if (!remediationState.active && currentQuestion.tag && shouldTriggerDetour(curre
 
 // Never fall back behind the most recently cleared boss gate
 	room = Math.max(bossCheckpoint, newRoom);
+    if(gameMode === "timed") timedSetbacks++;
 
     saveGameState();
 
-    alert(`Incorrect! You trip in the darkness and tumble back to Room ${room}.`);
-
-    loadQuestion();
+    showGameModal({
+        title: "Wrong Turn",
+        text: `Incorrect! You trip in the darkness and tumble back to Room ${room}.`,
+        confirmText: "Continue",
+        onConfirm: function(){
+            loadQuestion();
+        }
+    });
 }
 
 // =============================================
@@ -5050,6 +5898,7 @@ if (!remediationState.active && currentQuestion.tag && shouldTriggerDetour(curre
 // Requires matching ID format: "vault" + ArtifactName
 // Safe to customize artifact visuals/text only
 function unlockArtifact(key) {
+    if(!modeAllowsHubProgress()) return;
     const id = "vault" + key.charAt(0).toUpperCase() + key.slice(1);
     document.getElementById(id).classList.add("unlocked");
     localStorage.setItem(id, "true");
@@ -5383,6 +6232,11 @@ function generateCode(name, acc, streak, total){
 // This is a PRESENTATION layer, not a logic layer.
 // =============================================     
 function handleVictory() {
+    if(!modeAllowsHubProgress()){
+        handlePracticeModeComplete();
+        return;
+    }
+
     localStorage.setItem(HUB_STARTED_KEY, "true");
     localStorage.setItem(HUB_COMPLETE_KEY, "true");
     localStorage.setItem(HUB_STATUS_KEY, "cleared");
@@ -5654,6 +6508,7 @@ function sendGameData(data) {
     streak: Number(data.streak ?? 0),
     elapsedTime: Number(data.elapsedTime ?? data.elapsedTimeMs ?? 0),
     adaptiveMode: data.adaptiveMode || adaptiveMode || "",
+    mode: data.mode || gameMode || "standard",
     totalTime: Number(data.totalTime ?? data.totalTimeMs ?? 0),
     accuracy: Number(data.accuracy ?? 0),
     maxStreak: Number(data.maxStreak ?? 0),
@@ -5686,6 +6541,7 @@ function sendGameData(data) {
 </script>
 </body>
 </html>
+
 
 
 
