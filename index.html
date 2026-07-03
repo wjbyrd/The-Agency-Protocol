@@ -730,7 +730,7 @@ button:active {
         inset 0 0 10px rgba(0,0,0,0.78);
 }
 
-/* Boss room highlights: 10 Underwriter, 20 Auditor, 30 Architect */
+/* Boss room highlights: 10 Underwriter, 20 Auditor, 30 Principal */
 .maze-box:nth-child(10) {
     text-shadow:
         0 0 8px #b91c1c,
@@ -945,7 +945,7 @@ button:active {
         drop-shadow(0 0 38px rgba(0,0,0,0.86));
 }
 
-/* Boss 3 — The Chief Architect of Incentives */
+/* Boss 3 — The Principal */
 .architectGlow {
     filter:
         drop-shadow(0 0 16px rgba(240,200,106,0.92))
@@ -2227,6 +2227,135 @@ TIP:
   .score-float{ font-size: 20px; }
 }
 
+
+
+/* =========================================
+   PRINCIPAL FINAL ENTRANCE
+   The guide becomes the final boss.
+========================================= */
+
+.principal-intro{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  min-height:360px;
+  padding:30px 20px;
+  text-align:center;
+  animation:principalIntroIn .65s ease forwards;
+}
+
+.principal-suspense{
+  animation:principalIntroFade 5s ease forwards;
+}
+
+@keyframes principalIntroIn{
+  0%{
+    opacity:0;
+    transform:scale(0.97);
+  }
+
+  100%{
+    opacity:1;
+    transform:scale(1);
+  }
+}
+
+.principal-intro .bossIcon{
+  width:160px;
+  height:auto;
+  margin-bottom:18px;
+  filter:
+    drop-shadow(0 0 12px rgba(255,248,231,0.95))
+    drop-shadow(0 0 32px rgba(240,200,106,0.55))
+    drop-shadow(0 0 58px rgba(56,189,248,0.38));
+}
+
+.principal-intro-title{
+  font-size:42px;
+  letter-spacing:5px;
+  font-weight:800;
+  color:#fff8e7;
+  text-shadow:
+    0 0 12px rgba(255,248,231,0.85),
+    0 0 32px rgba(240,200,106,0.45),
+    0 3px 8px rgba(0,0,0,0.95);
+}
+
+.principal-intro-line{
+  margin-top:14px;
+  font-size:24px;
+  letter-spacing:2px;
+  color:#f0c86a;
+  text-shadow:
+    0 0 10px rgba(240,200,106,0.55),
+    0 2px 6px rgba(0,0,0,0.95);
+}
+
+.principal-intro-subline,
+.principal-dialogue{
+  margin-top:8px;
+  font-size:17px;
+  letter-spacing:1.2px;
+  color:#dbeafe;
+  opacity:0.94;
+  line-height:1.45;
+  max-width:720px;
+  text-shadow:
+    0 0 8px rgba(56,189,248,0.42),
+    0 2px 6px rgba(0,0,0,0.95);
+}
+
+.principal-dialogue-img{
+  width:220px !important;
+  max-width:220px !important;
+  margin-bottom:10px;
+}
+
+.principal-intro-actions{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin-top:22px;
+}
+
+.principal-skip-btn,
+.principal-begin-btn{
+  min-width:140px;
+}
+
+.principalGlow{
+  filter:
+    drop-shadow(0 0 16px rgba(240,200,106,0.96))
+    drop-shadow(0 0 34px rgba(56,189,248,0.62))
+    drop-shadow(0 0 46px rgba(15,23,42,0.68))
+    drop-shadow(0 0 52px rgba(0,0,0,0.9));
+}
+
+@keyframes principalIntroFade{
+  0%{
+    opacity:0;
+    transform:scale(0.96);
+  }
+
+  18%{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  82%{
+    opacity:1;
+    transform:scale(1);
+  }
+
+  100%{
+    opacity:0;
+    transform:scale(1.03);
+  }
+}
+
+
 /* =========================================
    TOUCH DEVICE FIX — ANSWER BUTTONS ONLY
 ========================================= */
@@ -2909,6 +3038,7 @@ let remediationState = {
 let conceptMemory = {};
 let masteryState = { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
 let adaptiveMode = "support";
+let principalIntroPlayed = false;
 // =============================================
 // RAPID GUESSING / BUTTON-MASHING DETECTOR
 // =============================================
@@ -3334,6 +3464,7 @@ function saveGameState(){
         conceptMemory,
         masteryState,
         adaptiveMode,
+        principalIntroPlayed,
         tagHistory,
         lastTypes,
         usedQuestions,
@@ -3389,6 +3520,7 @@ function loadSavedGame(){
         conceptMemory = saveData.conceptMemory || {};
         masteryState = saveData.masteryState || { byTag: {}, byObjective: {}, bySkill: {}, recent: [] };
         adaptiveMode = saveData.adaptiveMode || "support";
+        principalIntroPlayed = !!saveData.principalIntroPlayed;
         tagHistory = saveData.tagHistory || [];
         lastTypes = saveData.lastTypes || [];
 
@@ -4330,7 +4462,7 @@ algorithm:{
 function getAgencyBossName(){
   if(room === 10) return "Underwriter of Hidden Risk";
   if(room === 20) return "Auditor of Moral Hazard";
-  if(room === 30) return "Chief Architect of Incentives";
+  if(room === 30) return "The Principal";
   return "The Agency";
 }
 
@@ -4695,6 +4827,7 @@ if(!hasSavedRun){
 	rapidGuessHistory = [];
 	rapidGuessWarnings = 0;
 	rapidGuessLocked = false;
+	principalIntroPlayed = false;
 	bossMistakeCountThisRun = 0;
     bossesDefeatedThisRun = 0;
 
@@ -4762,6 +4895,102 @@ if(localStorage.getItem("vaultAlgorithm")){
 }
 	 
 
+
+function beginPrincipalTrial(){
+    loadQuestion();
+}
+
+function showPrincipalIntro(step = 1){
+    const questionElement = document.getElementById("question");
+    const answersElement = document.getElementById("answers");
+
+    if (answersElement) answersElement.innerHTML = "";
+
+    if (step === 1) {
+        questionElement.innerHTML = `
+            <div class="principal-intro">
+                <img src="principal.png" class="bossIcon principalGlow principal-dialogue-img">
+                <div class="principal-intro-title">THE PRINCIPAL</div>
+
+                <div class="principal-dialogue">
+                    You have done exactly what I needed.
+                    <br><br>
+                    You priced hidden risk, exposed moral hazard, tracked shirking, and read the machinery of incentives.
+                    <br><br>
+                    I have been beside you the whole time because this was never only about defeating the Agency.
+                    It was about proving you could run it.
+                </div>
+
+                <div class="principal-intro-actions">
+                    <button onclick="beginPrincipalTrial()" class="principal-skip-btn">Skip</button>
+                    <button onclick="showPrincipalIntro(2)" class="principal-begin-btn">Continue</button>
+                </div>
+            </div>
+        `;
+        return;
+    }
+
+    questionElement.innerHTML = `
+        <div class="principal-intro">
+            <img src="principal.png" class="bossIcon principalGlow">
+            <div class="principal-intro-title">THE PRINCIPAL</div>
+
+            <div class="principal-dialogue">
+                The final protocol is not a villain in a locked office.
+                <br><br>
+                It is the contract itself: the rule that decides who bears risk, who has information, who acts, who monitors, and who pays when incentives fail.
+                <br><br>
+                Face me now. Show that you can design the system instead of being played by it.
+            </div>
+
+            <div class="principal-intro-actions">
+                <button onclick="beginPrincipalTrial()" class="principal-skip-btn">Skip</button>
+                <button onclick="beginPrincipalTrial()" class="principal-begin-btn">Begin Final Protocol</button>
+            </div>
+        </div>
+    `;
+}
+
+function showPrincipalSuspenseIntro(){
+    const gameBox = document.getElementById("gameBox");
+    const questionElement = document.getElementById("question");
+    const answersElement = document.getElementById("answers");
+    const bossMsg = document.getElementById("bossMessage");
+    const imageBox = document.getElementById("questionImageBox");
+
+    if (answersElement) answersElement.innerHTML = "";
+
+    if (imageBox) {
+        imageBox.innerHTML = "";
+        imageBox.style.display = "none";
+    }
+
+    if (bossMsg) {
+        bossMsg.innerText = "⚠ FINAL DIRECTIVE DETECTED ⚠";
+        bossMsg.style.color = "#fff8e7";
+    }
+
+    if (gameBox) {
+        gameBox.style.setProperty("--bossColor", "#fff8e7");
+        gameBox.classList.add("boss-mode");
+    }
+
+    playFinalBossMusic();
+
+    questionElement.innerHTML = `
+        <div class="principal-intro principal-suspense">
+            <img src="principal.png" class="bossIcon principalGlow">
+            <div class="principal-intro-title">THE PRINCIPAL</div>
+            <div class="principal-intro-line">Final authority revealed.</div>
+            <div class="principal-intro-subline">The guide becomes the last test.</div>
+        </div>
+    `;
+
+    setTimeout(() => {
+        showPrincipalIntro(1);
+    }, 5000);
+}
+
 function resetRunStateForNewMode(){
     room = 1;
     bossHealth = 3;
@@ -4781,6 +5010,7 @@ function resetRunStateForNewMode(){
     rapidGuessHistory = [];
     rapidGuessWarnings = 0;
     rapidGuessLocked = false;
+    principalIntroPlayed = false;
     timedHighestRoom = 1;
     timedSetbacks = 0;
 	bossMistakeCountThisRun = 0;
@@ -5044,7 +5274,7 @@ function getAreaName(r) {
     if (r === 20) return "The Auditor’s Chamber";
     if (r <= 25) return "The Incentive Corridor";
     if (r <= 29) return "The Control Suite";
-    return "The Architect’s Office";
+    return "The Principal’s Office";
 }
 	 
 // =============================================
@@ -5372,9 +5602,9 @@ function updateMazeTrack() {
             box.innerText = "🟦";
         } else {
             // Boss icons for future rooms
-            if (i === 10){box.innerHTML = '<img src="registrar.webp" class="boss-icon">';box.classList.add("boss10");}
-            else if (i === 20){box.innerHTML = '<img src="warden.webp" class="boss-icon">';box.classList.add("boss20");}
-            else if (i === 30){box.innerHTML = '<img src="comptroller.webp" class="boss-icon">';box.classList.add("boss30");}
+            if (i === 10){box.innerHTML = '<img src="underwriter.png" class="boss-icon">';box.classList.add("boss10");}
+            else if (i === 20){box.innerHTML = '<img src="auditor.png" class="boss-icon">';box.classList.add("boss20");}
+            else if (i === 30){box.innerHTML = '<img src="principal.png" class="boss-icon">';box.classList.add("boss30");}
             else box.innerText = "🟨";
         }
         
@@ -5559,6 +5789,12 @@ function loadQuestion() {
 
     // 3. Select the Question (CHANGE BOSS NAMES AND PNG)
 if (isBoss) {
+    if (room === 30 && bossHealth === 3 && !principalIntroPlayed) {
+        principalIntroPlayed = true;
+        showPrincipalSuspenseIntro();
+        return;
+    }
+
     // 1. If it's a new fight, build a three-question boss pool by objective.
     // Boss pools are scaffolded by LO, not random tag soup.
     if (bossHealth === 3 || !bossPool || bossPool.length === 0) {
@@ -5632,13 +5868,13 @@ if (isBoss) {
     }
 
     // 3. Boss Identity UI — Agency Protocol
-    let bTitle = room === 10 ? "THE REGISTRAR OF FALSE MEASURES"
-        : room === 20 ? "THE WARDEN OF LABOR FLOWS"
-        : "THE COMPTROLLER OF EQUILIBRIUM";
+    let bTitle = room === 10 ? "THE UNDERWRITER OF HIDDEN RISK"
+        : room === 20 ? "THE AUDITOR OF MORAL HAZARD"
+        : "THE PRINCIPAL";
 
-    let bColor = room === 10 ? "#a78bfa"
-        : room === 20 ? "#7c3aed"
-        : "#991b1b";
+    let bColor = room === 10 ? "#b91c1c"
+        : room === 20 ? "#38bdf8"
+        : "#fff8e7";
 
     document.getElementById("srAnnouncements").innerText =
         `Boss encounter. ${bTitle}. Prepare yourself`;
@@ -5651,16 +5887,16 @@ if (isBoss) {
     let bossClass = "";
 
     if (room === 10) {
-        bossImage = "registrar.webp";
-        bossClass = "registrarGlow";
+        bossImage = "underwriter.png";
+        bossClass = "underwriterGlow";
     }
     else if (room === 20) {
-        bossImage = "warden.webp";
-        bossClass = "wardenGlow";
+        bossImage = "auditor.png";
+        bossClass = "auditorGlow";
     }
     else {
-        bossImage = "comptroller.webp";
-        bossClass = "comptrollerGlow";
+        bossImage = "principal.png";
+        bossClass = "principalGlow";
     }
 
     questionElement.innerHTML = `
@@ -6593,8 +6829,8 @@ else if (bossRoom === 20) {
     summary = "The surveillance floor goes silent. You have traced hidden action, exposed shirking, and shown how monitoring and incentives reshape behavior.";
 } 
 else if (bossRoom === 30) {
-    title = "THE CHIEF ARCHITECT OF INCENTIVES BREAKS: THE INCENTIVE ALGORITHM IS YOURS";
-    summary = "The control suite goes dark. You have read the principal-agent conflict, anticipated how incentives get gamed, and seized the system that turns rules into behavior.";
+    title = "THE PRINCIPAL SIGNS OFF: THE INCENTIVE ALGORITHM IS YOURS";
+    summary = "The final protocol locks into place. You have read the principal-agent conflict, anticipated how incentives get gamed, and proven you can design the system instead of being played by it.";
 }
   
     // Update the UI
