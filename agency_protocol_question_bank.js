@@ -831,7 +831,7 @@ window.questionBanks = {
     {
       "id": 4000,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect studies the chain of command: 'One decides. Another bears the cost.' What is the first step in diagnosing a principal-agent problem?",
+      "q": "The Principal studies the chain of command: 'One decides. Another bears the cost.' What is the first step in diagnosing a principal-agent problem?",
       "options": [
         "Identify the principal, the agent, the decision being delegated, and the incentive conflict",
         "Set a bonus before identifying who makes the decision",
@@ -853,7 +853,7 @@ window.questionBanks = {
     {
       "id": 4001,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect opens the executive file: shareholders want long-run firm value, but the CEO wants perks, prestige, and a larger staff. What creates the agency problem?",
+      "q": "The Principal opens the executive file: shareholders want long-run firm value, but the CEO wants perks, prestige, and a larger staff. What creates the agency problem?",
       "options": [
         "The agent has decision authority and different incentives from the principal",
         "The CEO and shareholders have identical goals",
@@ -875,7 +875,7 @@ window.questionBanks = {
     {
       "id": 4002,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect warns: 'Information is power.' A manager knows more about daily operations than the owner and is rewarded for revenue rather than profit. What is the likely risk?",
+      "q": "The Principal warns: 'Information is power.' A manager knows more about daily operations than the owner and is rewarded for revenue rather than profit. What is the likely risk?",
       "options": [
         "The manager may use private information to chase revenue even when profit falls",
         "The manager will automatically maximize total firm value",
@@ -897,7 +897,7 @@ window.questionBanks = {
     {
       "id": 4003,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect installs audits, reporting rules, and verification systems. What kind of agency cost is this?",
+      "q": "The Principal installs audits, reporting rules, and verification systems. What kind of agency cost is this?",
       "options": [
         "Monitoring cost",
         "Residual loss",
@@ -919,7 +919,7 @@ window.questionBanks = {
     {
       "id": 4004,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect offers a contract: 'Accept limits on your spending authority, and the owners will trust you more.' What is this closest to?",
+      "q": "The Principal offers a contract: 'Accept limits on your spending authority, and the owners will trust you more.' What is this closest to?",
       "options": [
         "Bonding by the agent",
         "Adverse selection by the principal",
@@ -941,7 +941,7 @@ window.questionBanks = {
     {
       "id": 4005,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect reviews the final report: monitoring and bonuses improved behavior, but some decisions still failed to maximize owner value. What remains?",
+      "q": "The Principal reviews the final report: monitoring and bonuses improved behavior, but some decisions still failed to maximize owner value. What remains?",
       "options": [
         "Residual loss",
         "Perfect incentive alignment",
@@ -963,7 +963,7 @@ window.questionBanks = {
     {
       "id": 4006,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect observes the sales division: agents are paid for total revenue, so they offer deep discounts that reduce profit. What is the best diagnosis?",
+      "q": "The Principal observes the sales division: agents are paid for total revenue, so they offer deep discounts that reduce profit. What is the best diagnosis?",
       "options": [
         "The incentive rewards an incomplete metric that agents can game",
         "The sales agents are solving adverse selection",
@@ -985,7 +985,7 @@ window.questionBanks = {
     {
       "id": 4007,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect studies the service desk: workers are rewarded for speed, so they rush calls and customer quality falls. What should the firm add?",
+      "q": "The Principal studies the service desk: workers are rewarded for speed, so they rush calls and customer quality falls. What should the firm add?",
       "options": [
         "A quality measure or penalty so speed is not the only rewarded target",
         "A larger reward for speed only",
@@ -1007,7 +1007,7 @@ window.questionBanks = {
     {
       "id": 4008,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect gives the warning: 'Every metric creates a shadow.' What does it mean to game incentives?",
+      "q": "The Principal gives the warning: 'Every metric creates a shadow.' What does it mean to game incentives?",
       "options": [
         "Improve the measured target while harming the broader goal",
         "Reveal hidden quality before a transaction",
@@ -1029,7 +1029,7 @@ window.questionBanks = {
     {
       "id": 4009,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect redraws authority: headquarters has better company-wide information, but local managers know customers better. What is the core organizational tradeoff?",
+      "q": "The Principal redraws authority: headquarters has better company-wide information, but local managers know customers better. What is the core organizational tradeoff?",
       "options": [
         "Centralized control and coordination versus decentralized local knowledge",
         "Screening versus signaling",
@@ -1051,7 +1051,7 @@ window.questionBanks = {
     {
       "id": 4010,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect centralizes discount approval because local managers cut prices to boost sales volume while lowering profit. Why centralize?",
+      "q": "The Principal centralizes discount approval because local managers cut prices to boost sales volume while lowering profit. Why centralize?",
       "options": [
         "To limit local decisions that damage total firm profit",
         "To help managers chase revenue more freely",
@@ -1073,7 +1073,7 @@ window.questionBanks = {
     {
       "id": 4011,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect decentralizes customer-service decisions because branch managers understand local customers better than headquarters. Why decentralize?",
+      "q": "The Principal decentralizes customer-service decisions because branch managers understand local customers better than headquarters. Why decentralize?",
       "options": [
         "Local information is valuable and fast decisions matter",
         "Headquarters has perfect information",
@@ -1095,7 +1095,7 @@ window.questionBanks = {
     {
       "id": 4012,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect looks above the divisions: 'The system is not built for one room.' What should the parent company maximize?",
+      "q": "The Principal looks above the divisions: 'The system is not built for one room.' What should the parent company maximize?",
       "options": [
         "Total firm profit, not just one division's score",
         "The budget of the largest division only",
@@ -1117,7 +1117,7 @@ window.questionBanks = {
     {
       "id": 4013,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect sees Division A reject a project that would lower its own score but raise total company profit. What is the problem?",
+      "q": "The Principal sees Division A reject a project that would lower its own score but raise total company profit. What is the problem?",
       "options": [
         "Local division incentives conflict with total firm value",
         "Division A is solving adverse selection",
@@ -1139,7 +1139,7 @@ window.questionBanks = {
     {
       "id": 4014,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect delivers the parent-company rule: 'A division victory can still be a firm defeat.' What does that mean?",
+      "q": "The Principal delivers the parent-company rule: 'A division victory can still be a firm defeat.' What does that mean?",
       "options": [
         "A decision can improve one division's results while reducing total firm profit",
         "Every division should always maximize its own score",
@@ -1161,7 +1161,7 @@ window.questionBanks = {
     {
       "id": 4015,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect sets the internal price: Division A sells a component to Division B inside the same firm. What is the price called?",
+      "q": "The Principal sets the internal price: Division A sells a component to Division B inside the same firm. What is the price called?",
       "options": [
         "Transfer price",
         "Deductible",
@@ -1183,7 +1183,7 @@ window.questionBanks = {
     {
       "id": 4016,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect sees the flaw: a transfer price is set so high that Division B rejects an internal purchase that would help the company overall. What happened?",
+      "q": "The Principal sees the flaw: a transfer price is set so high that Division B rejects an internal purchase that would help the company overall. What happened?",
       "options": [
         "The internal price distorted division incentives",
         "The firm solved moral hazard",
@@ -1205,7 +1205,7 @@ window.questionBanks = {
     {
       "id": 4017,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect notes idle capacity: Division A can produce an internal component at marginal cost, and no outside sale is being sacrificed. What transfer price best encourages efficient internal trade?",
+      "q": "The Principal notes idle capacity: Division A can produce an internal component at marginal cost, and no outside sale is being sacrificed. What transfer price best encourages efficient internal trade?",
       "options": [
         "A price close to marginal cost",
         "A price far above market price",
@@ -1227,7 +1227,7 @@ window.questionBanks = {
     {
       "id": 4018,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect labels a division: it controls revenue decisions and cost decisions and is judged on profit. What is it?",
+      "q": "The Principal labels a division: it controls revenue decisions and cost decisions and is judged on profit. What is it?",
       "options": [
         "Profit center",
         "Cost center",
@@ -1249,7 +1249,7 @@ window.questionBanks = {
     {
       "id": 4019,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect studies the support department: it is judged mainly on staying under budget, so it cuts useful service quality. What is the issue?",
+      "q": "The Principal studies the support department: it is judged mainly on staying under budget, so it cuts useful service quality. What is the issue?",
       "options": [
         "Cost-center metrics can reward cost cutting that reduces overall value",
         "Cost centers always maximize total firm profit",
@@ -1271,7 +1271,7 @@ window.questionBanks = {
     {
       "id": 4020,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect compares two units: one is evaluated on profit, the other mainly on expenses. What is the key distinction?",
+      "q": "The Principal compares two units: one is evaluated on profit, the other mainly on expenses. What is the key distinction?",
       "options": [
         "A profit center is judged on revenues and costs; a cost center is judged mainly on costs",
         "A profit center has no costs; a cost center has no managers",
@@ -1293,7 +1293,7 @@ window.questionBanks = {
     {
       "id": 4021,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect groups employees into marketing, finance, operations, and human resources. What is the main advantage?",
+      "q": "The Principal groups employees into marketing, finance, operations, and human resources. What is the main advantage?",
       "options": [
         "Specialization within each function",
         "Perfect coordination across all departments",
@@ -1315,7 +1315,7 @@ window.questionBanks = {
     {
       "id": 4022,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect watches marketing promise fast delivery without checking with operations. What failed?",
+      "q": "The Principal watches marketing promise fast delivery without checking with operations. What failed?",
       "options": [
         "Coordination between functional divisions",
         "Adverse selection screening",
@@ -1337,7 +1337,7 @@ window.questionBanks = {
     {
       "id": 4023,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect warns: 'Specialists can become silos.' What is a common weakness of functional units?",
+      "q": "The Principal warns: 'Specialists can become silos.' What is a common weakness of functional units?",
       "options": [
         "Departments may focus on their own goals and fail to coordinate",
         "They prevent employees from developing expertise",
@@ -1359,7 +1359,7 @@ window.questionBanks = {
     {
       "id": 4024,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect divides the firm into product divisions, and each division has its own marketing, operations, and finance staff. What structure is this?",
+      "q": "The Principal divides the firm into product divisions, and each division has its own marketing, operations, and finance staff. What structure is this?",
       "options": [
         "Multidivisional structure",
         "Pure functional structure",
@@ -1381,7 +1381,7 @@ window.questionBanks = {
     {
       "id": 4025,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect chooses a multidivisional structure for a large firm with several business lines. Why might this help?",
+      "q": "The Principal chooses a multidivisional structure for a large firm with several business lines. Why might this help?",
       "options": [
         "It gives each major business unit clearer responsibility for performance",
         "It eliminates all coordination problems",
@@ -1403,7 +1403,7 @@ window.questionBanks = {
     {
       "id": 4026,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect compares structures: functional units improve specialization, while multidivisional units improve what?",
+      "q": "The Principal compares structures: functional units improve specialization, while multidivisional units improve what?",
       "options": [
         "Accountability for product, region, or business-line performance",
         "Adverse selection in insurance markets",
@@ -1425,7 +1425,7 @@ window.questionBanks = {
     {
       "id": 4027,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect reviews next year's request: a manager overstates expected costs so the approved budget will be easier to meet. What is this?",
+      "q": "The Principal reviews next year's request: a manager overstates expected costs so the approved budget will be easier to meet. What is this?",
       "options": [
         "Budget slack created through budget gaming",
         "A credible signal of high ability",
@@ -1447,7 +1447,7 @@ window.questionBanks = {
     {
       "id": 4028,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect sees the year-end ritual: a department spends unnecessary money so next year's budget will not be cut. What does this show?",
+      "q": "The Principal sees the year-end ritual: a department spends unnecessary money so next year's budget will not be cut. What does this show?",
       "options": [
         "A budget rule can reward wasteful spending",
         "The department is maximizing total firm profit",
@@ -1469,7 +1469,7 @@ window.questionBanks = {
     {
       "id": 4029,
       "sourceGame": "agencyProtocol",
-      "q": "The Architect delivers the final judgment: sales agents bring in bad customers for signup bonuses, managers delay maintenance to boost short-run profit, and divisions reject helpful internal trades. What is the common thread?",
+      "q": "The Principal delivers the final judgment: sales agents bring in bad customers for signup bonuses, managers delay maintenance to boost short-run profit, and divisions reject helpful internal trades. What is the common thread?",
       "options": [
         "Agents are responding to local incentives that conflict with the organization's broader goal",
         "The organization has only adverse selection and no moral hazard",
