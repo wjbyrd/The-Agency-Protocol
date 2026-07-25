@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8"/>
 <meta content="width=device-width, initial-scale=1" name="viewport"/>
@@ -3258,8 +3258,11 @@ function setMissionArtifactCount(count){
 }
 
 function updateMissionArtifactCountFromVault(){
-    const artifactCount = ["vaultLedger", "vaultLens", "vaultAlgorithm"]
-        .filter(key => localStorage.getItem(key) === "true").length;
+    const artifactCount = [
+        "agencyProtocolVaultLedger",
+        "agencyProtocolVaultLens",
+        "agencyProtocolVaultAlgorithm"
+    ].filter(key => localStorage.getItem(key) === "true").length;
 
     setMissionArtifactCount(artifactCount);
 }
@@ -3494,7 +3497,7 @@ function showScoreAttackFloat(label, amount){
 
     layer.appendChild(item);
 
-    setTimeout(() => {
+    scheduleForCurrentRun(() => {
         item.remove();
         activeScoreFloatCount = Math.max(0, activeScoreFloatCount - 1);
     }, 1200);
@@ -3760,7 +3763,15 @@ function resolveRemediationSkill(questionOrSkill){
         : (questionOrSkill?.primarySkill || questionOrSkill?.repairSkill || inferSkill(questionOrSkill));
 
     if(!rawSkill) return null;
-    if((window.microSkillRepairPools || {})[rawSkill] || (window.microSkillBridgePools || {})[rawSkill]){
+
+    const repairPools = typeof microSkillRepairPools !== "undefined"
+        ? microSkillRepairPools
+        : {};
+    const bridgePools = typeof microSkillBridgePools !== "undefined"
+        ? microSkillBridgePools
+        : {};
+
+    if(repairPools[rawSkill] || bridgePools[rawSkill]){
         return rawSkill;
     }
     return AGENCY_REPAIR_SKILL_ALIASES[rawSkill] || rawSkill;
@@ -4800,14 +4811,13 @@ function endTimedAttemptEarly(){
         ? Math.round((correctAnswers / totalAttempts) * 100)
         : 0;
 
+    const reachedRoom = Math.max(timedHighestRoom || 1, room || 1);
+
     localStorage.setItem("agencyProtocolTimedLastRoom", String(room));
+    localStorage.setItem("agencyProtocolTimedLastHighestRoom", String(reachedRoom));
     localStorage.setItem("agencyProtocolTimedLastAccuracy", String(accuracy));
     localStorage.setItem("agencyProtocolTimedLastAttempts", String(totalAttempts));
     localStorage.setItem("agencyProtocolTimedLastStreak", String(maxStreak));
-
-    const reachedRoom = Math.max(timedHighestRoom || 1, room || 1);
-
-    localStorage.setItem("agencyProtocolTimedLastRoom", String(reachedRoom));
 
     recordTimedTrialAchievementStats(accuracy, reachedRoom);
 
@@ -4853,6 +4863,7 @@ function continueSavedRun(){
     gameMode = "standard";
     resumedSavedRunThisSession = true;
     beginRunSession();
+    resetGameSurfaceForNewRun(true);
     startGame(true, "standard");
 }
 
@@ -4928,7 +4939,8 @@ if(!hasSavedRun){
     totalAttempts = 0;
     correctAnswers = 0;
     bossPool = [];
-    calcBag = [];
+    currentQuestion = null;
+    if(typeof calcBag !== "undefined") calcBag = [];
     conceptMemory = {};
     masteryState = { byTag: {},  byObjective: {},  bySkill: {}, recent: [] };
     tagHistory = [];
@@ -4985,9 +4997,19 @@ if(!hasSavedRun){
    // IMPORTANT:
    // localStorage keys must match the HTML element ids.
    // =============================================    
-["vaultLedger", "vaultLens", "vaultAlgorithm"].forEach(id => {
+const artifactStorageKeys = {
+    vaultLedger: "agencyProtocolVaultLedger",
+    vaultLens: "agencyProtocolVaultLens",
+    vaultAlgorithm: "agencyProtocolVaultAlgorithm"
+};
+Object.entries(artifactStorageKeys).forEach(([id, storageKey]) => {
     const slot = document.getElementById(id);
-    if(slot) slot.classList.toggle("unlocked", modeAllowsRealmProgress() && localStorage.getItem(id) === "true");
+    if(slot){
+        slot.classList.toggle(
+            "unlocked",
+            modeAllowsRealmProgress() && localStorage.getItem(storageKey) === "true"
+        );
+    }
 });
 // Start game loop: music + timer + first question
     initializeRunForMode(gameMode);
@@ -5226,9 +5248,9 @@ function endTimedModeRun(){
     const accuracy = totalAttempts > 0
         ? Math.round((correctAnswers / totalAttempts) * 100)
         : 0;
-    const totalTimeMs = freezeCompletionTime();
+    const totalTimeMs = freezeCompletionTime(timedModeDurationMs);
     const timeString = formatTime(totalTimeMs);
-    const verificationCode = generateCode(username +  + "|TIMED", accuracy, maxStreak, totalTimeMs);
+    const verificationCode = generateCode(username + "|TIMED", accuracy, maxStreak, totalTimeMs);
 
     const bestRoom = Number(localStorage.getItem("agencyProtocolTimedBestRoom") || 0);
     if(timedHighestRoom > bestRoom){
@@ -5258,9 +5280,9 @@ function endTimedModeRun(){
         responseTime: 0,
         attempt: totalAttempts,
         streak: streak,
-        elapsedTime: startTime ? (Date.now() - startTime) : 0,
+        elapsedTime: totalTimeMs,
         adaptiveMode: "timed_complete",
-        totalTime: timedModeDurationMs,
+        totalTime: totalTimeMs,
         accuracy: accuracy / 100,
         maxStreak: maxStreak,
         totalAttempts: totalAttempts,
@@ -5355,17 +5377,20 @@ function getDifficultyForMode(){
 // Allows pressing Enter to start the game
 // Improves usability, does not affect logic
 // =============================================
-document.getElementById("localIdentity").addEventListener("keypress", function(event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
+const localIdentityInput = document.getElementById("localIdentity");
+if(localIdentityInput){
+    localIdentityInput.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
 
-        if(hasSavedGame("standard")){
-            continueSavedRun();
-        } else {
-            showModeSelect();
+            if(hasSavedGame("standard")){
+                continueSavedRun();
+            } else {
+                showModeSelect();
+            }
         }
-    }
-});
+    });
+}
 
 // =============================================
 // AREA NAMING SYSTEM — SAFE TO CUSTOMIZE (WITH RULES)
@@ -5512,16 +5537,16 @@ function wizardSpeak(text){
 
 // =============================================
 // QUESTION BANKS — EXTERNALIZED
-// The question pools now live in agency_protocol_question_bank.js.
-// Keep that file beside this index.html file in the GitHub Pages root.
+// The question pools live in agency_protocol_question_bank_student.js.
+// Keep that file beside this HTML file in the GitHub Pages root.
 // =============================================
 
 
-if(!window.questionBanks){
-    throw new Error("The Agency Protocol question bank did not load. Check agency_protocol_question_bank.js.");
+if(typeof questionBanks === "undefined"){
+    throw new Error("The Agency Protocol question bank did not load. Check agency_protocol_question_bank_student.js.");
 }
-if(!window.microSkillRepairPools || !window.microSkillBridgePools){
-    throw new Error("The Agency Protocol repair/bridge pools did not load. Check agency_protocol_question_bank.js.");
+if(typeof microSkillRepairPools === "undefined" || typeof microSkillBridgePools === "undefined"){
+    throw new Error("The Agency Protocol repair/bridge pools did not load. Check agency_protocol_question_bank_student.js.");
 }
 console.log("The Agency Protocol question bank loaded", {
     easy: questionBanks.easy?.length || 0,
@@ -5562,33 +5587,28 @@ console.log("The Agency Protocol question bank loaded", {
 // This function ensures fairness in answer order.
 // =============================================   
 function shuffleOptions(question){
-    let q = {
-        id: question.id,
-        q: question.q,
-        options: [...question.options],
-        a: question.a,
-        feedback: question.feedback,
-        hint: question.hint,
-        tag: question.tag,
-        type: question.type,
-        objective: question.objective,
-        image: question.image,
-		difficulty: question.difficulty,
-        conceptCluster: question.conceptCluster,
-        primarySkill: question.primarySkill,
-        secondarySkills: question.secondarySkills || [],
-        repairSkill: question.repairSkill,
-        commonError: question.commonError
+    const q = {
+        ...question,
+        options: [...(question.options || [])],
+        secondarySkills: [...(question.secondarySkills || [])]
     };
 
-    let correct = q.options[q.a];
+    // Faculty source questions use a numeric answer index.
+    // Published student questions use aHash tied to normalized option text.
+    const correctText = Number.isInteger(question.a)
+        ? question.options[question.a]
+        : null;
 
     for(let i = q.options.length - 1; i > 0; i--){
-        let j = Math.floor(Math.random() * (i + 1));
+        const j = Math.floor(Math.random() * (i + 1));
         [q.options[i], q.options[j]] = [q.options[j], q.options[i]];
     }
 
-    q.a = q.options.indexOf(correct);
+    if(correctText !== null){
+        q.a = q.options.indexOf(correctText);
+    } else {
+        delete q.a;
+    }
 
     return q;
 }
@@ -6164,6 +6184,7 @@ if(currentQuestion.image){
 // This is the bridge between UI and protocol.
 // =============================================     
 function displayQuestion() {
+    answerSubmissionPending = false;
     const optionsElement = document.getElementById("answers");
     optionsElement.innerHTML = "";
 
@@ -6714,10 +6735,16 @@ showGameModal({
 function unlockArtifact(key) {
     const id = "vault" + key.charAt(0).toUpperCase() + key.slice(1);
     const slot = document.getElementById(id);
+    const storageKeyByArtifact = {
+        ledger: "agencyProtocolVaultLedger",
+        lens: "agencyProtocolVaultLens",
+        algorithm: "agencyProtocolVaultAlgorithm"
+    };
 
     if(slot){
         slot.classList.add("unlocked");
-        localStorage.setItem(id, "true");
+        const storageKey = storageKeyByArtifact[key];
+        if(storageKey) localStorage.setItem(storageKey, "true");
         updateMissionArtifactCountFromVault();
     }
 
@@ -7029,6 +7056,7 @@ function handleLegendaryVictory(){
     document.getElementById("formulaHint").innerText = "";
     document.getElementById("artifactDrop").style.display = "none";
     closeGraphLightbox();
+    document.getElementById("questionImageBox").style.display = "none";
 
     document.getElementById("question").innerHTML = `
         <span class="boss-title">LEGENDARY MODE COMPLETE</span>
@@ -7129,10 +7157,10 @@ function handleScoreAttackVictory(){
 
     const totalTimeMs = freezeCompletionTime();
     const timeString = formatTime(totalTimeMs);
-    const verificationCode = generateCode(username +  + "|SCORE", accuracy, maxStreak, totalTimeMs);
     const accuracy = totalAttempts > 0
         ? Math.round((correctAnswers / totalAttempts) * 100)
         : 0;
+    const verificationCode = generateCode(username + "|SCORE", accuracy, maxStreak, totalTimeMs);
 
     storeScoreAttackFinalStats(accuracy, totalTimeMs);
 
@@ -7188,8 +7216,7 @@ function handleScoreAttackVictory(){
             Best Streak: ${maxStreak}<br>
             Total Time: ${timeString}<br>
             Run ID: <strong>${runID}</strong><br>
-            Verification Code: <strong>${verificationCode}</strong><br>
-            Total Time: ${timeString}
+            Verification Code: <strong>${verificationCode}</strong>
         </div>
     `;
 
@@ -7217,7 +7244,7 @@ function handlePracticeModeComplete(){
         : 0;
     const totalTimeMs = freezeCompletionTime();
     const timeString = formatTime(totalTimeMs);
-    const verificationCode = generateCode(username +  + "|" + String(gameMode).toUpperCase(), accuracy, maxStreak, totalTimeMs);
+    const verificationCode = generateCode(username + "|" + String(gameMode).toUpperCase(), accuracy, maxStreak, totalTimeMs);
 
 	if(gameMode === "exam"){
  	   markExamDrillCompleted();
@@ -7237,9 +7264,9 @@ function handlePracticeModeComplete(){
         responseTime: 0,
         attempt: totalAttempts,
         streak: streak,
-        elapsedTime: startTime ? (Date.now() - startTime) : 0,
+        elapsedTime: totalTimeMs,
         adaptiveMode: `${gameMode}_complete`,
-        totalTime: startTime ? (Date.now() - startTime) : 0,
+        totalTime: totalTimeMs,
         accuracy: accuracy / 100,
         maxStreak: maxStreak,
         totalAttempts: totalAttempts,
@@ -7250,6 +7277,7 @@ function handlePracticeModeComplete(){
     document.getElementById("formulaHint").innerText = "";
     document.getElementById("artifactDrop").style.display = "none";
     closeGraphLightbox();
+    document.getElementById("questionImageBox").style.display = "none";
 
     document.getElementById("question").innerHTML = `
         <span class="boss-title">${getModeDisplayName().toUpperCase()} COMPLETE</span>
@@ -7399,7 +7427,7 @@ sendGameData({
     responseTime: 0,
     attempt: totalAttempts,
     streak: streak,
-    elapsedTime: startTime ? (Date.now() - startTime) : 0,
+    elapsedTime: totalTimeMs,
     adaptiveMode: "complete",
     totalTime: totalTimeMs,
     accuracy: accuracy / 100,
