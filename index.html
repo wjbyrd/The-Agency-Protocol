@@ -3351,7 +3351,8 @@ function isBossRoomForMode(r){
 }
 
 function getModeDisplayName(){
-    if(gameMode === "timed") return "Timed Trial";
+    if(gameMode === "timed-ended-early") return "Timed Trial Ended Early";
+    if(gameMode === "timed" || gameMode === "timed-complete") return "Timed Trial";
     if(gameMode === "exam") return "Exam Drill";
     if(gameMode === "score") return "Score Attack";
     if(gameMode === "bossRush") return "Boss Rush";
@@ -4864,6 +4865,9 @@ function endTimedAttemptEarly(){
 
     timedModeTerminal = true;
     stopTimedModeClock();
+    const actualElapsedTimeMs = freezeCompletionTime();
+    gameMode = "timed-ended-early";
+    answerSubmissionPending = true;
 
     const accuracy = totalAttempts > 0
         ? Math.round((correctAnswers / totalAttempts) * 100)
@@ -4871,13 +4875,29 @@ function endTimedAttemptEarly(){
 
     const reachedRoom = Math.max(timedHighestRoom || 1, room || 1);
 
-    localStorage.setItem("agencyProtocolTimedLastRoom", String(room));
-    localStorage.setItem("agencyProtocolTimedLastHighestRoom", String(reachedRoom));
-    localStorage.setItem("agencyProtocolTimedLastAccuracy", String(accuracy));
-    localStorage.setItem("agencyProtocolTimedLastAttempts", String(totalAttempts));
-    localStorage.setItem("agencyProtocolTimedLastStreak", String(maxStreak));
+    storeTimedTrialResult(accuracy, reachedRoom, room);
 
-    recordTimedTrialAchievementStats(accuracy, reachedRoom);
+    sendGameData({
+        runID: runID,
+        game: "The Agency Protocol",
+        event: "timed_ended_early",
+        user: username,
+        room: room,
+        questionId: 0,
+        correct: 0,
+        tag: "",
+        type: "",
+        objective: "",
+        responseTime: 0,
+        attempt: totalAttempts,
+        streak: streak,
+        elapsedTime: actualElapsedTimeMs,
+        adaptiveMode: "timed_ended_early",
+        totalTime: actualElapsedTimeMs,
+        accuracy: accuracy / 100,
+        maxStreak: maxStreak,
+        totalAttempts: totalAttempts
+    });
 
     returnToModeSelectFromRun();
 }
@@ -4899,6 +4919,21 @@ function recordTimedTrialAchievementStats(accuracy, reachedRoom){
         setRealmFlag(MACRO_TRIAL_BY_CLOCK_KEY);
         setRealmFlag(`${getMissionAchievementPrefix()}_trial_by_clock_complete`);
     }
+}
+
+function storeTimedTrialResult(accuracy, reachedRoom, finalRoom = room){
+    const safeAccuracy = Number.isFinite(Number(accuracy)) ? Number(accuracy) : 0;
+    const safeReachedRoom = Math.max(1, Math.min(30, Number(reachedRoom) || 1));
+    const safeFinalRoom = Math.max(1, Math.min(30, Number(finalRoom) || 1));
+
+    localStorage.setItem("agencyProtocolTimedLastRoom", String(safeFinalRoom));
+    localStorage.setItem("agencyProtocolTimedLastHighestRoom", String(safeReachedRoom));
+    localStorage.setItem("agencyProtocolTimedLastAccuracy", String(safeAccuracy));
+    localStorage.setItem("agencyProtocolTimedLastAttempts", String(totalAttempts));
+    localStorage.setItem("agencyProtocolTimedLastStreak", String(maxStreak));
+    localStorage.setItem("agencyProtocolTimedLastSetbacks", String(timedSetbacks));
+
+    recordTimedTrialAchievementStats(safeAccuracy, safeReachedRoom);
 }
 
 function showContinueButtonIfSaved(){
@@ -5313,19 +5348,7 @@ function endTimedModeRun(){
     const timeString = formatTime(totalTimeMs);
     const verificationCode = generateCode(username + "|TIMED", accuracy, maxStreak, totalTimeMs);
 
-    const bestRoom = Number(localStorage.getItem("agencyProtocolTimedBestRoom") || 0);
-    if(timedHighestRoom > bestRoom){
-        localStorage.setItem("agencyProtocolTimedBestRoom", String(timedHighestRoom));
-    }
-
-    localStorage.setItem("agencyProtocolTimedLastRoom", String(room));
-    localStorage.setItem("agencyProtocolTimedLastHighestRoom", String(timedHighestRoom));
-    localStorage.setItem("agencyProtocolTimedLastAccuracy", String(accuracy));
-    localStorage.setItem("agencyProtocolTimedLastAttempts", String(totalAttempts));
-    localStorage.setItem("agencyProtocolTimedLastStreak", String(maxStreak));
-    localStorage.setItem("agencyProtocolTimedLastSetbacks", String(timedSetbacks));
-
-	recordTimedTrialAchievementStats(accuracy, timedHighestRoom);
+    storeTimedTrialResult(accuracy, timedHighestRoom, room);
 
     sendGameData({
         runID: runID,
@@ -5929,9 +5952,13 @@ function loadQuestion() {
         return;
     }
 
-    if((gameMode === "timed" || gameMode === "exam") && room > 30){
+    if(gameMode === "exam" && room > 30){
         handlePracticeModeComplete();
         return;
+    }
+
+    if(gameMode === "timed" && room > 30){
+        room = 30;
     }
 
     questionStartTime = Date.now(); 
